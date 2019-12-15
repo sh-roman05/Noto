@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceScreen
+        android:key="app_version"
+        android:title="@string/activity_about_app_version"
+        app:iconSpaceReserved="false"
+        />
+    <PreferenceScreen
+        android:key="build_time"
+        android:title="@string/activity_about_build_time"
+        app:iconSpaceReserved="false"/>
+    <PreferenceScreen
+        android:key="author"
+        android:title="@string/activity_about_author"
+        android:summary="@string/app_author"
+        app:iconSpaceReserved="false"/>
+
+</PreferenceScreen>

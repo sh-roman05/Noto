@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout
+    android:id="@+id/activity_notes_drawer"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.Notes.NotesActivity"
+    android:fitsSystemWindows="true"
+    tools:openDrawer="start">
+
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/activity_notes_collapsing_appbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:fitsSystemWindows="true">
+
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:id="@+id/activity_notes_collapsing_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_scrollFlags="scroll|enterAlways"
+                android:fitsSystemWindows="true"
+                app:titleEnabled="false">
+
+                <androidx.appcompat.widget.Toolbar
+                    app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                    android:id="@+id/activity_notes_toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="?attr/colorPrimary"
+                    app:layout_collapseMode="pin"
+                    app:layout_scrollFlags="scroll|snap" />
+
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <com.roman.noto.RecyclerViewEmptySupport
+            android:id="@+id/activity_notes_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#ffffff"
+            android:clipToPadding="false"
+            android:padding="4dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            app:theme="@style/Widget.MaterialComponents.FloatingActionButton"
+            android:id="@+id/activity_notes_add_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fabSize="normal"
+            android:layout_gravity="bottom|end"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="16dp"
+            app:srcCompat="@drawable/ic_add_white"
+            android:clickable="true"
+            android:focusable="true"
+            />
+
+
+        <LinearLayout
+            android:id="@+id/activity_notes_empty_view"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_event_note_black"
+                android:tint="#555"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/activity_notes_delete_placeholder" />
+        </LinearLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+    <com.google.android.material.navigation.NavigationView
+        style="@style/Widget.MaterialComponents.BottomNavigationView"
+        android:id="@+id/activity_notes_navigation"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:menu="@menu/navigation_view"
+        app:headerLayout="@layout/navigation_header"
+        android:fitsSystemWindows="true" />
+
+
+
+
+</androidx.drawerlayout.widget.DrawerLayout>
+
+
+
+
+
+

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/meet_view_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <com.google.android.material.card.MaterialCardView
+        style="@style/Widget.MaterialComponents.CardView"
+        android:id="@+id/notes_list_card_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="0dp"
+        app:cardUseCompatPadding="true">
+
+        <LinearLayout
+            android:id="@+id/notes_list_text_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_margin="8dp"
+            android:minHeight="30dp">
+
+            <!-- Заголовок -->
+            <TextView
+                android:id="@+id/notes_list_view_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:maxLines = "2"/>
+
+            <!-- Основной текст -->
+            <TextView
+                android:id="@+id/notes_list_view_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines = "12"/>
+
+        </LinearLayout>
+
+
+
+    </com.google.android.material.card.MaterialCardView>
+
+</RelativeLayout>

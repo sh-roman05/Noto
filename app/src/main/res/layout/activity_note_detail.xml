@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    android:id="@+id/activity_note_detail_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.NoteDetail.NoteDetailActivity"
+    android:fitsSystemWindows="true">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.Toolbar
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            android:id="@+id/activity_note_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            app:layout_anchorGravity="center" />
+
+        <ScrollView
+            android:id="@+id/activity_note_scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:orientation="vertical">
+
+
+                <EditText
+                    android:id="@+id/activity_note_detail_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:background="@android:color/transparent"
+                    android:hint="@string/activity_note_detail_title"
+                    android:inputType="textPersonName"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:importantForAutofill="no" />
+
+                <EditText
+                    android:id="@+id/activity_note_detail_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:hint="@string/activity_note_detail_text"
+                    android:inputType="textMultiLine"
+                    android:textSize="18sp"
+                    android:layout_marginBottom="12dp"
+                    android:importantForAutofill="no"/>
+
+                <TextView
+                    android:id="@+id/activity_note_detail_last_change"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+    </LinearLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Для эффекта затемнения -->
+    <View
+        android:id="@+id/activity_note_grey_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <!-- подключение нижнего экрана -->
+    <!-- <include layout="@layout/note_detail_bottom_sheet" /> -->
+
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

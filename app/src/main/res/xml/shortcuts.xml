@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="id1"
+        android:enabled="true"
+        android:icon="@drawable/ic_add_grey"
+        android:shortcutShortLabel="@string/shortcuts_add_note"
+        android:shortcutLongLabel="@string/shortcuts_add_note_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.roman.noto"
+            android:targetClass="com.roman.noto.ui.NoteDetail.NoteDetailActivity" >
+            <extra android:name="from" android:value="shortcut_new_note" />
+        </intent>
+
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+</shortcuts>

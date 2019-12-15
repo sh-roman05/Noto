@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="columns">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+    <string-array name="columnsName">
+        <item>@string/activity_settings_column_one</item>
+        <item>@string/activity_settings_column_two</item>
+        <item>@string/activity_settings_column_three</item>
+    </string-array>
+</resources>

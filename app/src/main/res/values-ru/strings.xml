@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">Noto</string>
+    <string name="navigation_view_notes">Заметки</string>
+    <string name="navigation_view_archive">Корзина</string>
+    <string name="navigation_view_settings">Настройки</string>
+    <string name="navigation_view_about">О приложении</string>
+    <string name="activity_about_build_time">Дата сборки</string>
+    <string name="activity_about_app_version">Версия приложения</string>
+    <string name="app_author">Роман Шарипов</string>
+    <string name="activity_about_author">Автор приложения</string>
+    <string name="activity_note_detail_action_restore">Восстановить</string>
+    <string name="activity_note_detail_action_panel">Действия</string>
+    <string name="activity_note_detail_color">Выбор цвета</string>
+    <string name="activity_note_detail_action_delete">Удалить</string>
+    <string name="activity_note_detail_action_copy">Создать копию</string>
+    <string name="shortcuts_add_note">Новая заметка</string>
+    <string name="shortcuts_add_note_long">Новая заметка</string>
+    <string name="activity_note_detail_last_change">\'Последнее изменение:\' dd MMMM yyyy \'г. в\' hh:mm</string>
+    <string name="activity_about_build_time_format">dd MMMM yyyy \'г. в\' hh:mm</string>
+    <string name="activity_note_detail_title">Заголовок</string>
+    <string name="activity_note_detail_text">Текст</string>
+    <string name="activity_settings_column">Количество столбцов</string>
+    <string name="activity_settings_delete_base">Удалить базу данных</string>
+    <string name="activity_settings_delete_base_detail">Удалить все заметки, фотографии, аудиозаписи, итд.</string>
+    <string name="activity_settings_column_one">Одна</string>
+    <string name="activity_settings_column_two">Две</string>
+    <string name="activity_settings_column_three">Три</string>
+    <string name="activity_notes_delete_archive">Удалить все</string>
+    <string name="activity_notes_delete_archive_text">Вы действительно хотите очистить корзину?</string>
+    <string name="activity_notes_delete_archive_yes">Удалить</string>
+    <string name="activity_notes_delete_archive_no">Отмена</string>
+    <string name="activity_notes_delete_placeholder">У вас нет заметок</string>
+    <string name="activity_note_detail_action_archive">Удалить</string>
+</resources>

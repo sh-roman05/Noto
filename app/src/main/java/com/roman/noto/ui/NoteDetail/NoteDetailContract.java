@@ -11,7 +11,7 @@ public interface NoteDetailContract {
     }
 
     interface Presenter {
-        void loadNoteById(String id);
+        void loadNote(Note id);
         void saveNote(Note note);
         void archiveNote(Note note);
         void cloneNote(Note note);

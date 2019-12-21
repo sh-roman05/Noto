@@ -7,6 +7,8 @@ import com.roman.noto.data.callback.GetFirstPositionCallback;
 import com.roman.noto.data.callback.GetNoteCallback;
 import com.roman.noto.data.callback.LoadNotesCallback;
 
+import java.util.List;
+
 public interface Repository {
 
     void saveNote(Note note);
@@ -33,4 +35,10 @@ public interface Repository {
 
     //Удалить заметку из базы
     void deleteNote(Note note, final DeleteNoteCallback callback);
+
+    //Обновить заметки из списка
+    void updateNotes(List<Note> notes);
+
+    //Удалить заметки по списку
+    void deleteNotes(List<Note> notes);
 }

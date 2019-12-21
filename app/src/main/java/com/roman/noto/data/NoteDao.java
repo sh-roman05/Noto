@@ -38,6 +38,12 @@ public interface NoteDao {
     @Update
     void update(Note note);
 
+    @Update
+    void updateList(List<Note> notes);
+
+    @Delete
+    void deleteList(List<Note> notes);
+
     //Удалить весь архив заметок
     @Query("DELETE FROM notes WHERE archive = 1")
     void deleteArchiveNotes();
@@ -45,5 +51,10 @@ public interface NoteDao {
     //Получить заметку по id
     @Query("SELECT * FROM notes WHERE id = :noteId")
     Note getNoteById(String noteId);
+
+
+    //Для тестовых данных
+    @Insert
+    void insertList(List<Note> notes);
 
 }

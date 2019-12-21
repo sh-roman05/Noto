@@ -5,14 +5,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/activity_note_detail_toolbar_restore"
-        android:icon="@drawable/ic_delete_restore_white"
+        android:icon="@drawable/ic_delete_restore"
         android:title="@string/activity_note_detail_action_restore"
         app:showAsAction="always"
+        app:iconTint="@color/notesDetailToolbarIcon"
         tools:ignore="AlwaysShowAction"/>
     <item
         android:id="@+id/activity_note_detail_toolbar_delete"
-        android:icon="@drawable/ic_delete_white"
+        android:icon="@drawable/ic_delete"
         android:title="@string/activity_note_detail_action_delete"
         app:showAsAction="always"
+        app:iconTint="@color/notesDetailToolbarIcon"
         tools:ignore="AlwaysShowAction"/>
 </menu>

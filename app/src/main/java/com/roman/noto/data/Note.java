@@ -1,5 +1,8 @@
 package com.roman.noto.data;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
@@ -12,7 +15,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @Entity(tableName = "notes")
-public class Note {
+public class Note implements Parcelable {
 
     @PrimaryKey
     @NonNull
@@ -68,6 +71,19 @@ public class Note {
         this.fixed = fixed;
         this.position = position;
         this.lastChange = lastChange;
+    }
+
+    @Ignore
+    protected Note(Parcel in) {
+        id = in.readString();
+        title = in.readString();
+        text = in.readString();
+        archive = in.readByte() != 0x00;
+        color = in.readInt();
+        fixed = in.readByte() != 0x00;
+        position = in.readInt();
+        long tmpLastChange = in.readLong();
+        lastChange = tmpLastChange != -1 ? new Date(tmpLastChange) : null;
     }
 
 
@@ -141,4 +157,35 @@ public class Note {
     public void setPosition(int position) {
         this.position = position;
     }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(title);
+        dest.writeString(text);
+        dest.writeByte((byte) (archive ? 0x01 : 0x00));
+        dest.writeInt(color);
+        dest.writeByte((byte) (fixed ? 0x01 : 0x00));
+        dest.writeInt(position);
+        dest.writeLong(lastChange != null ? lastChange.getTime() : -1L);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<Note> CREATOR = new Parcelable.Creator<Note>() {
+        @Override
+        public Note createFromParcel(Parcel in) {
+            return new Note(in);
+        }
+
+        @Override
+        public Note[] newArray(int size) {
+            return new Note[size];
+        }
+    };
 }

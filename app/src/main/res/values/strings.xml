@@ -31,4 +31,6 @@
     <string name="activity_notes_delete_archive_no">Cancel</string>
     <string name="activity_notes_delete_placeholder">You have no notes</string>
     <string name="activity_note_detail_action_archive">Delete</string>
+    <string name="activity_note_detail_action_share">Share</string>
+    <string name="activity_notes_change_color_title">Color selection</string>
 </resources>

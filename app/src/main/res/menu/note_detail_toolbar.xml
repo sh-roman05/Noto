@@ -5,8 +5,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/activity_note_detail_toolbar_bottom_panel"
-        android:icon="@drawable/ic_dots_horizontal_white"
+        android:icon="@drawable/ic_dots_horizontal"
         android:title="@string/activity_note_detail_action_panel"
         app:showAsAction="always"
+        app:iconTint="@color/notesDetailToolbarIcon"
         tools:ignore="AlwaysShowAction" />
 </menu>

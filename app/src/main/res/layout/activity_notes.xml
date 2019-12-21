@@ -62,7 +62,7 @@
             android:layout_gravity="bottom|end"
             android:layout_marginBottom="16dp"
             android:layout_marginEnd="16dp"
-            app:srcCompat="@drawable/ic_add_white"
+            app:srcCompat="@drawable/ic_add"
             android:clickable="true"
             android:focusable="true"
             />
@@ -79,7 +79,7 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_event_note_black"
+                android:src="@drawable/ic_event_note"
                 android:tint="#555"
                 />
             <TextView

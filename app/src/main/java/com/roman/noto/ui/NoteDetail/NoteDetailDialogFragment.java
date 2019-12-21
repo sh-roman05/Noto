@@ -31,6 +31,7 @@ public class NoteDetailDialogFragment extends BottomSheetDialogFragment
     {
         void copy();
         void archive();
+        void share();
         void selectColor(NoteColor.ItemColor color);
     }
 
@@ -65,6 +66,14 @@ public class NoteDetailDialogFragment extends BottomSheetDialogFragment
                 callback.copy();
             }
         });
+        LinearLayout action_share = (LinearLayout) contentView.findViewById(R.id.activity_note_detail_action_share);
+        action_share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismiss();
+                callback.share();
+            }
+        });
 
 
         color_list = (RecyclerView) contentView.findViewById(R.id.activity_note_detail_color_list);
@@ -92,7 +101,7 @@ public class NoteDetailDialogFragment extends BottomSheetDialogFragment
             }
 
             //Выбрать текущий
-            Drawable icon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_done_grey, null);
+            Drawable icon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_done, null);
             if (icon != null) color.setImageDrawable(icon);
 
             selectColor = adapterPosition;
@@ -182,7 +191,7 @@ public class NoteDetailDialogFragment extends BottomSheetDialogFragment
 
         if(select)
         {
-            Drawable icon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_done_grey, null);
+            Drawable icon = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_done, null);
             if (icon != null)
                 button.setImageDrawable(icon);
         }

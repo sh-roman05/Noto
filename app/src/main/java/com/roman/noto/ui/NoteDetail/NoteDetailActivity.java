@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -38,7 +39,7 @@ public class NoteDetailActivity extends AppCompatActivity implements NoteDetailC
     private EditText title;
     private EditText text;
     private TextView lastChange;
-    private View background;
+
     //Меню
     private NoteDetailDialogFragment bottomSheetDialogFragment;
 
@@ -54,11 +55,10 @@ public class NoteDetailActivity extends AppCompatActivity implements NoteDetailC
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //Инициализация
-        title = (EditText) findViewById(R.id.activity_note_detail_title);
-        text = (EditText) findViewById(R.id.activity_note_detail_text);
-        layout = (CoordinatorLayout) findViewById(R.id.activity_note_detail_layout);
-        lastChange = (TextView) findViewById(R.id.activity_note_detail_last_change);
-        background = findViewById(R.id.activity_note_grey_background);
+        title = findViewById(R.id.activity_note_detail_title);
+        text = findViewById(R.id.activity_note_detail_text);
+        layout = findViewById(R.id.activity_note_detail_layout);
+        lastChange = findViewById(R.id.activity_note_detail_last_change);
         bottomSheetDialogFragment = new NoteDetailDialogFragment(menuCallback);
 
         //повторное создание пустых AppExecutors, стоит убрать
@@ -69,19 +69,21 @@ public class NoteDetailActivity extends AppCompatActivity implements NoteDetailC
         ));
 
         //Откуда пришли
-        String from = getIntent().getExtras().get("from").toString();
-        switch (from)
-        {
-            case "shortcut_new_note":
-                //Создать новую заметку
-                presenter.createNote();
-                break;
-            case "main_edit_note":
-                //Редактировать
-                String id = getIntent().getExtras().get("id").toString();
-                presenter.loadNoteById(id);
-                break;
+        String from = getIntent().getStringExtra("from");
+        if(from != null) {
+            switch (from) {
+                case "shortcut_new_note":
+                    //Создать новую заметку
+                    presenter.createNote();
+                    break;
+                case "main_edit_note":
+                    //Редактировать
+                    Note id = getIntent().getParcelableExtra("note");
+                    presenter.loadNote(id);
+                    break;
+            }
         }
+
     }
 
 
@@ -94,6 +96,16 @@ public class NoteDetailActivity extends AppCompatActivity implements NoteDetailC
         @Override
         public void archive() {
             presenter.archiveNote(note);
+        }
+
+        @Override
+        public void share() {
+            //todo отправка заметки в другие приложения
+
+            Intent share = new Intent(Intent.ACTION_SEND);
+            share.setType("image/*");
+            share.putExtra(Intent.EXTRA_TEXT, text.getText());
+            startActivity(Intent.createChooser(share, "Share with"));
         }
 
         @Override

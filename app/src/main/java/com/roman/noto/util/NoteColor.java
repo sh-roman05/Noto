@@ -77,6 +77,8 @@ public class NoteColor
 
     public ItemColor getItemColor(int index)
     {
+        if(index < 0) return colors[0];
+
         if(colors.length - 1 < index)
         {
             return colors[0];

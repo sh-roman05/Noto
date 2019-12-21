@@ -102,7 +102,7 @@ public class CacheRepository implements Repository
     @Override
     public void clearAllTables() {
         //Очистить кэш
-        cachedNotes = null;
+        cachedNotes = new LinkedHashMap<>();
         position = null;
         //Очистить базу
         repository.clearAllTables();
@@ -151,13 +151,30 @@ public class CacheRepository implements Repository
         });
     }
 
+    @Override
+    public void updateNotes(List<Note> notes) {
+
+        for (Note note: notes) {
+            cachedNotes.put(note.getId(), note);
+        }
+
+        //Закинуть в кэш
+        repository.updateNotes(notes);
+    }
+
+    @Override
+    public void deleteNotes(List<Note> notes) {
+        for (Note note: notes)
+            cachedNotes.remove(note.getId());
+        repository.deleteNotes(notes);
+    }
+
 
     private void refreshCache(List<Note> tasks) {
         createCasheIsNull();
         cachedNotes.clear();
-        for (Note task : tasks) {
+        for (Note task : tasks)
             cachedNotes.put(task.getId(), task);
-        }
     }
 
     @Override
@@ -221,7 +238,8 @@ public class CacheRepository implements Repository
                 @Override
                 public void onNotesLoaded(List<Note> notes) {
 
-                    if (position == null) position = notes.get(0).getPosition();
+                    if(!notes.isEmpty() && position == null)
+                        position = notes.get(0).getPosition();
 
                     refreshCache(notes);
                     ArrayList<Note> temp = new ArrayList<>();

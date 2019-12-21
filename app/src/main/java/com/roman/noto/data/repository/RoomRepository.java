@@ -15,7 +15,9 @@ import com.roman.noto.data.callback.GetNoteCallback;
 import com.roman.noto.data.callback.LoadNotesCallback;
 import com.roman.noto.util.AppExecutors;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class RoomRepository implements Repository {
 
@@ -84,6 +86,7 @@ public class RoomRepository implements Repository {
             @Override
             public void run() {
                 db.clearAllTables();
+                generateTestData();
             }
         };
         appExecutors.diskIO().execute(runnable);
@@ -157,6 +160,28 @@ public class RoomRepository implements Repository {
     }
 
     @Override
+    public void updateNotes(final List<Note> notes) {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                dao.updateList(notes);
+            }
+        };
+        appExecutors.diskIO().execute(runnable);
+    }
+
+    @Override
+    public void deleteNotes(final List<Note> notes) {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                dao.deleteList(notes);
+            }
+        };
+        appExecutors.diskIO().execute(runnable);
+    }
+
+    @Override
     public void getNote(final String id, final GetNoteCallback callback) {
         Runnable runnable = new Runnable() {
             @Override
@@ -197,11 +222,7 @@ public class RoomRepository implements Repository {
                 appExecutors.mainThread().execute(new Runnable() {
                     @Override
                     public void run() {
-                        if (list.isEmpty()) {
-                            callback.onDataNotAvailable();
-                        } else {
-                            callback.onNotesLoaded(list);
-                        }
+                        callback.onNotesLoaded(list);
                     }
                 });
             }
@@ -209,4 +230,56 @@ public class RoomRepository implements Repository {
         appExecutors.diskIO().execute(runnable);
     }
 
+    private void generateTestData()
+    {
+        Random rand = new Random();
+
+
+        ArrayList<Note> templ = new ArrayList<>();
+
+        for (int i = 0; i < 120; i++) {
+            int color = Math.abs(rand.nextInt() % 18);
+
+            String title = "Title " + color;
+
+            String text = "";
+            int cnt = Math.abs(rand.nextInt() % 6) + 1;
+            for (int j = 0; j < cnt; j++) {
+                text += "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ";
+            }
+
+
+            Note temp = new Note();
+            temp.setColor(color);
+            temp.setTitle(title);
+            temp.setText(text);
+
+            templ.add(temp);
+        }
+
+        dao.insertList(templ);
+
+
+
+
+
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

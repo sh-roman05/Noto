@@ -3,12 +3,12 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/navigation_menu_notes"
-            android:icon="@drawable/ic_event_note_black"
+            android:icon="@drawable/ic_event_note"
             android:checked="true"
             android:title="@string/navigation_view_notes" />
         <item
             android:id="@+id/navigation_menu_archive"
-            android:icon="@drawable/ic_delete_black"
+            android:icon="@drawable/ic_delete"
             android:title="@string/navigation_view_archive" />
     </group>
 
@@ -16,12 +16,12 @@
     <group android:checkableBehavior="none" android:id="@+id/navigation_menu_group_base">
         <item
             android:id="@+id/navigation_menu_settings"
-            android:icon="@drawable/ic_settings_black"
+            android:icon="@drawable/ic_settings"
             android:title="@string/navigation_view_settings" />
 
         <item
             android:id="@+id/navigation_menu_about"
-            android:icon="@drawable/ic_error_outline_black"
+            android:icon="@drawable/ic_error_outline"
             android:title="@string/navigation_view_about" />
 
     </group>

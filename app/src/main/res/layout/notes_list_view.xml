@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/meet_view_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-
     <com.google.android.material.card.MaterialCardView
-        style="@style/Widget.MaterialComponents.CardView"
         android:id="@+id/notes_list_card_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         app:cardCornerRadius="0dp"
-        app:cardUseCompatPadding="true">
+        app:cardUseCompatPadding="true"
+        >
 
         <LinearLayout
             android:id="@+id/notes_list_text_container"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_margin="8dp"
@@ -39,8 +38,31 @@
 
         </LinearLayout>
 
+        <!-- Затемняющий слой View -->
+        <RelativeLayout
+            android:id="@+id/notes_list_card_view_select_overlay"
+            android:alpha="0"
+            android:background="#50000000"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:stateListAnimator="@xml/note_view_item_selected">
 
+            <!-- Иконка -->
+            <View
+                android:id="@+id/notes_list_card_view_select_round"
+                android:background="@drawable/selected_item"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="12dp"
+                android:layout_marginBottom="12dp"
+                android:layout_alignParentEnd="true"
+                android:stateListAnimator="@xml/note_view_item_selected_icon" />
+
+        </RelativeLayout>
 
     </com.google.android.material.card.MaterialCardView>
 
-</RelativeLayout>
+</FrameLayout>
+
+

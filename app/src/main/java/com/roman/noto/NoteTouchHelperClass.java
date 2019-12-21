@@ -6,10 +6,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.roman.noto.data.Note;
 import com.roman.noto.ui.Notes.NotesActivity;
+import com.roman.noto.ui.Notes.NotesAdapter;
 
 import java.util.List;
 
 public class NoteTouchHelperClass extends ItemTouchHelper.Callback {
+    static final String TAG = "NoteTouchHelperClass";
+
     private ItemTouchHelperAdapter adapter;
     public interface ItemTouchHelperAdapter {
         void onItemMoved(int fromPosition, int toPosition);
@@ -26,7 +29,7 @@ public class NoteTouchHelperClass extends ItemTouchHelper.Callback {
         int swipeFlags = ItemTouchHelper.START | ItemTouchHelper.END;
 
         //todo не самый лучший способ блокировки
-        NotesActivity.NotesAdapter adapter2 = (NotesActivity.NotesAdapter)recyclerView.getAdapter();
+        NotesAdapter adapter2 = (NotesAdapter)recyclerView.getAdapter();
         if (adapter2 != null) {
             List<Note> temp = adapter2.getList();
             if(temp.get(viewHolder.getAdapterPosition()).isArchive())

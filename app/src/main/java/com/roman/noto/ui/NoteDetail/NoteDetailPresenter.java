@@ -23,16 +23,8 @@ public class NoteDetailPresenter implements NoteDetailContract.Presenter {
     }
 
     @Override
-    public void loadNoteById(String id) {
-        repository.getNote(id, new GetNoteCallback() {
-            @Override
-            public void onDataNotAvailable() { }
-
-            @Override
-            public void onNoteLoaded(Note note) {
-                view.noteView(note);
-            }
-        });
+    public void loadNote(Note note) {
+        view.noteView(note);
     }
 
     @Override

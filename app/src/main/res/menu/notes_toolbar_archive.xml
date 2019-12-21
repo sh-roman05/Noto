@@ -5,8 +5,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/activity_notes_archive_delete_all"
-        android:icon="@drawable/ic_delete_forever_white"
+        android:icon="@drawable/ic_delete_forever"
         android:title="@string/activity_notes_delete_archive"
         app:showAsAction="always"
+        app:iconTint="@color/notesToolbarIcon"
         tools:ignore="AlwaysShowAction" />
 </menu>

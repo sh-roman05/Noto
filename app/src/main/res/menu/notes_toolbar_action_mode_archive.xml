@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <!-- Восстановить заметки -->
+    <item
+        android:id="@+id/activity_notes_toolbar_restore"
+        android:icon="@drawable/ic_delete_restore"
+        android:title="@string/activity_note_detail_action_restore"
+        app:showAsAction="always"
+        app:iconTint="@color/notesActionModeIcon"
+        tools:ignore="AlwaysShowAction"/>
+    <!-- Удалить заметки -->
+    <item
+        android:id="@+id/activity_notes_toolbar_delete"
+        android:icon="@drawable/ic_delete"
+        android:title="@string/activity_note_detail_action_delete"
+        app:showAsAction="always"
+        app:iconTint="@color/notesActionModeIcon"
+        tools:ignore="AlwaysShowAction"/>
+    <!-- Изменить цвет заметок -->
+    <item
+        android:id="@+id/activity_notes_toolbar_color"
+        android:icon="@drawable/ic_color_lens"
+        android:title="@string/activity_note_detail_color"
+        app:showAsAction="always"
+        app:iconTint="@color/notesActionModeIcon"
+        tools:ignore="AlwaysShowAction"/>
+</menu>

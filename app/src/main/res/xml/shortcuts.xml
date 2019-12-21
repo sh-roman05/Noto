@@ -4,7 +4,7 @@
     <shortcut
         android:shortcutId="id1"
         android:enabled="true"
-        android:icon="@drawable/ic_add_grey"
+        android:icon="@drawable/ic_add"
         android:shortcutShortLabel="@string/shortcuts_add_note"
         android:shortcutLongLabel="@string/shortcuts_add_note_long">
         <intent

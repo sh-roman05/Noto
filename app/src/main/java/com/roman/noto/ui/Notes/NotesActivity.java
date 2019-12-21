@@ -1,13 +1,20 @@
 package com.roman.noto.ui.Notes;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.widget.Toolbar;
-import androidx.cardview.widget.CardView;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.preference.PreferenceManager;
+import androidx.recyclerview.selection.ItemKeyProvider;
+import androidx.recyclerview.selection.OnDragInitiatedListener;
+import androidx.recyclerview.selection.SelectionPredicates;
+import androidx.recyclerview.selection.SelectionTracker;
+import androidx.recyclerview.selection.StorageStrategy;
 import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
@@ -15,24 +22,22 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.view.Gravity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.ImageButton;
 
 
 import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
-import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.roman.noto.RecyclerViewEmptySupport;
 import com.roman.noto.ui.About.AboutActivity;
 import com.roman.noto.data.Note;
@@ -47,14 +52,13 @@ import com.roman.noto.util.AppExecutors;
 
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
 
 public class NotesActivity extends AppCompatActivity implements NotesContract.View {
 
-    //todo В старом приложении огромное количество полезного кода
     static final String TAG = "NotesActivity";
 
     public NotesContract.Presenter presenter;
@@ -62,10 +66,14 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
     FloatingActionButton addNoteButton;
     NavigationView navigationView;
     DrawerLayout drawerLayout;
-    View emptyView;
     //Toolbar
     Toolbar toolbar;
     AppBarLayout appBarLayout;
+
+    //Выделение заметок
+    private SelectionTracker<Note> mSelectionTracker;
+    //Замена Toolbar в режиме выделения заметок
+    private ActionMode actionMode;
 
 
     @Override
@@ -75,20 +83,20 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
         toolbar = findViewById(R.id.activity_notes_toolbar);
         toolbar.setTitle(getString(R.string.navigation_view_notes));
         setSupportActionBar(toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_menu_white);
+        toolbar.setNavigationIcon(R.drawable.ic_menu);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                drawerLayout.openDrawer(Gravity.LEFT);
+                drawerLayout.openDrawer(GravityCompat.START);
             }
         });
 
         //Инициализация
-        mainNoteView = (RecyclerViewEmptySupport) findViewById(R.id.activity_notes_list);
-        addNoteButton = (FloatingActionButton) findViewById(R.id.activity_notes_add_button);
-        navigationView = (NavigationView) findViewById(R.id.activity_notes_navigation);
-        drawerLayout = (DrawerLayout) findViewById(R.id.activity_notes_drawer);
-        appBarLayout = (AppBarLayout) findViewById(R.id.activity_notes_collapsing_appbar);
+        mainNoteView = findViewById(R.id.activity_notes_list);
+        addNoteButton = findViewById(R.id.activity_notes_add_button);
+        navigationView = findViewById(R.id.activity_notes_navigation);
+        drawerLayout = findViewById(R.id.activity_notes_drawer);
+        appBarLayout = findViewById(R.id.activity_notes_collapsing_appbar);
 
         View emptyView = findViewById(R.id.activity_notes_empty_view);
         mainNoteView.setEmptyView(emptyView);
@@ -127,7 +135,7 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
                     startActivity(intent);
                 }
 
-                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.activity_notes_drawer);
+                DrawerLayout drawer = findViewById(R.id.activity_notes_drawer);
                 drawer.closeDrawer(GravityCompat.START);
 
                 return true;
@@ -144,25 +152,217 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
 
 
 
-        mainNoteView.addItemDecoration(new SpacesItemDecoration(8));
-        mainNoteView.setAdapter(adapter);
-
-        presenter.loadNotes();
-
-        //Кнопка добавления записи
-        addNoteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                presenter.addNote();
-
-            }
-        });
-
         ItemTouchHelper itemTouchHelper;
         ItemTouchHelper.Callback callback = new NoteTouchHelperClass(adapter);
         itemTouchHelper = new ItemTouchHelper(callback);
         itemTouchHelper.attachToRecyclerView(mainNoteView);
+
+        mainNoteView.addItemDecoration(new SpacesItemDecoration(8));
+        mainNoteView.setAdapter(adapter);
+
+        mSelectionTracker = new SelectionTracker.Builder<>(
+                "note-items-selection",
+                mainNoteView,
+                new NotesAdapter.NoteItemKeyProvider(ItemKeyProvider.SCOPE_MAPPED, adapter.getList()),
+                new NotesAdapter.NoteItemDetailsLookup(mainNoteView),
+                StorageStrategy.createParcelableStorage(Note.class)
+        ).withSelectionPredicate(SelectionPredicates.<Note>createSelectAnything()).withOnDragInitiatedListener(new OnDragInitiatedListener() {
+            @Override
+            public boolean onDragInitiated(@NonNull MotionEvent e) {
+                Log.i(TAG, "onDragInitiated");
+                return true;
+            }
+        }).build();
+
+        adapter.setSelectionTracker(mSelectionTracker);
+
+
+
+        //Callback для отслеживания событий SelectionTracker
+        mSelectionTracker.addObserver(new SelectionTracker.SelectionObserver<Note>() {
+            @Override
+            public void onItemStateChanged(@NonNull Note key, boolean selected) {
+                super.onItemStateChanged(key, selected);
+                if(actionMode == null)
+                {
+                    actionMode = startSupportActionMode(actionModeCallback);
+                    if(actionMode != null) actionMode.setTitle(String.valueOf(1));
+
+                }else {
+                    if(mSelectionTracker.hasSelection())
+                    {
+                        actionMode.setTitle(String.valueOf(mSelectionTracker.getSelection().size()));
+                    }else {
+                        actionMode.finish();
+                    }
+                }
+            }
+
+            @Override
+            public void onSelectionRefresh() {
+                super.onSelectionRefresh();
+            }
+
+            @Override
+            public void onSelectionChanged() {
+                super.onSelectionChanged();
+            }
+
+            @Override
+            public void onSelectionRestored() {
+                super.onSelectionRestored();
+            }
+        });
+
+
+        presenter.loadNotes();
+
+        //Callback для отслеживания клика на FloatingActionButton
+        addNoteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                presenter.addNote();
+            }
+        });
+
+
+
+        //Callback для отслеживания событий DrawerLayout
+        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) { }
+
+            @Override
+            public void onDrawerOpened(@NonNull View drawerView) { }
+
+            @Override
+            public void onDrawerClosed(@NonNull View drawerView) { }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+                if(actionMode != null)
+                    actionMode.finish();
+            }
+        });
+
+
     }
+
+
+    //Callback для отслеживания событий ActionMode
+    private ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            MenuItem item = navigationView.getCheckedItem();
+            if(item != null) {
+                if(item.getItemId() == R.id.navigation_menu_notes)
+                    mode.getMenuInflater().inflate(R.menu.notes_toolbar_action_mode, menu);
+                if(item.getItemId() == R.id.navigation_menu_archive)
+                    mode.getMenuInflater().inflate(R.menu.notes_toolbar_action_mode_archive, menu);
+            }
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            //Заблокировать NavigationView
+            //drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            //Создать List на основе итератора
+            Iterator<Note> iterator = mSelectionTracker.getSelection().iterator();
+            List<Note> tempList = Lists.newArrayList(iterator);
+
+            if(item.getItemId() == R.id.activity_notes_toolbar_archive){
+                presenter.archiveNotesList(tempList);
+
+                //Показать изменения
+                adapter.deleteNotesFromList(tempList);
+                //Выйти из режима выбора
+                actionMode.finish();
+            }
+
+            if(item.getItemId() == R.id.activity_notes_toolbar_restore){
+                presenter.restoreNotesList(tempList);
+
+                //Показать изменения
+                adapter.deleteNotesFromList(tempList);
+                //Выйти из режима выбора
+                actionMode.finish();
+            }
+            if(item.getItemId() == R.id.activity_notes_toolbar_delete){
+                //
+                presenter.deleteNotesList(tempList);
+                //Показать изменения
+                adapter.deleteNotesFromList(tempList);
+                //Выйти из режима выбора
+                actionMode.finish();
+
+            }
+            if(item.getItemId() == R.id.activity_notes_toolbar_color){
+
+                if(dialog == null)
+                {
+                    //Ищем наш RecyclerView
+                    @SuppressLint("InflateParams") View convertView = LayoutInflater.from(NotesActivity.this).inflate(R.layout.notes_list_alert_select_color, null);
+                    RecyclerView colorList = convertView.findViewById(R.id.activity_notes_alert_color_list);
+                    //Закидываем адаптер
+                    NotesSelectColorAdapter notesSelectColorAdapter = new NotesSelectColorAdapter(notesSelectColorListener);
+                    colorList.setAdapter(notesSelectColorAdapter);
+                    colorList.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
+                    //Создаем окно
+                    dialog = new MaterialAlertDialogBuilder(NotesActivity.this)
+                            .setTitle(getString(R.string.activity_notes_change_color_title))
+                            .setView(convertView)
+                            .create();
+                }
+                dialog.show();
+            }
+            return false;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            //Разблокировать NavigationView
+            //drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            mSelectionTracker.clearSelection();
+            actionMode = null;
+        }
+    };
+
+
+    //Окно выбора цвета
+    AlertDialog dialog;
+
+    //Listener. Окно выбора цвета
+    NotesSelectColorAdapter.NotesSelectColorListener notesSelectColorListener = new NotesSelectColorAdapter.NotesSelectColorListener() {
+        @Override
+        public void onItemClick(NoteColor.ItemColor item, ImageButton color, int adapterPosition) {
+            Iterator<Note> iterator = mSelectionTracker.getSelection().iterator();
+            List<Note> tempList = Lists.newArrayList(iterator);
+
+            //Закинуть список в адаптер
+            adapter.changeColorList(tempList, item);
+
+            //Применить изменения
+            presenter.changeColorNotesList(tempList, item);
+
+            //Закрыть окно
+            dialog.dismiss();
+
+            //Выйти из режима выбора
+            actionMode.finish();
+        }
+    };
+
+
+
+
+
+
 
 
     @Override
@@ -228,136 +428,28 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
 
     @Override
     //Заметка от Presenter, которую нужно отредактировать
-    public void editNote(String targetId) {
+    public void editNote(Note target) {
         Intent intent = new Intent(getApplicationContext(), NoteDetailActivity.class);
-        intent.putExtra("id", targetId);
+        intent.putExtra("note", target);
         intent.putExtra("from", "main_edit_note");
         startActivity(intent);
     }
 
     NotesAdapter adapter = new NotesAdapter(new ArrayList<Note>(), new NoteListener() {
         @Override
-        public void onItemClick(String targetId) {
-            presenter.clickNote(targetId);
+        public void onItemClick(Note target) {
+            presenter.clickNote(target);
         }
-    });
-
-
-    public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHolder> implements NoteTouchHelperClass.ItemTouchHelperAdapter {
-        private List<Note> list;
-        private NoteListener listener;
-
-        NotesAdapter(List<Note> notes, NoteListener listener) {
-            setList(notes);
-            this.listener = listener;
-        }
-
-        @NonNull
-        @Override
-        public NoteViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            @SuppressLint("InflateParams")
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.notes_list_view, null);
-            return new NoteViewHolder(view);
-        }
-
-
-        @Override
-        public void onBindViewHolder(@NonNull NoteViewHolder holder, int position) {
-            Note item = list.get(position);
-
-            if(Strings.isNullOrEmpty(item.getTitle())) {
-                holder.title.setVisibility(View.GONE);
-            } else {
-                holder.title.setVisibility(View.VISIBLE);
-                holder.title.setText(item.getTitle());
-            }
-            if(Strings.isNullOrEmpty(item.getText()))
-                holder.text.setVisibility(View.GONE);
-            else holder.text.setText(item.getText());
-
-            holder.card.setCardBackgroundColor(Color.parseColor(NoteColor.getInstance().getItemColor(item.getColor()).getColorBackground()));
-        }
-
-        public List<Note> getList() {
-            return list;
-        }
-
-        @Override
-        public int getItemCount() {
-            return (list != null ? list.size() : 0);
-        }
-
-        public void replaceData(List<Note> notes) {
-            setList(notes);
-            notifyDataSetChanged();
-        }
-
-        private void setList(List<Note> notes) {
-            this.list = notes;
-        }
-
-        @Override
-        public void onItemMoved(int fromPosition, int toPosition) {
-            presenter.swapNotes(list.get(fromPosition), list.get(toPosition));
-            Collections.swap(list, fromPosition, toPosition);
-            notifyItemMoved(fromPosition, toPosition);
-        }
-
-        @Override
-        public void onItemRemoved(int position) {
-            Note item = list.get(position);
-            presenter.archiveNote(item);
-            //Удалить из адаптера
-            list.remove(position);
-            notifyItemRemoved(position);
-        }
-
-
-        class NoteViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
-
-            TextView title;
-            TextView text;
-            CardView card;
-            List<Note> innerList;
-
-            public NoteViewHolder(View itemView) {
-                super(itemView);
-                itemView.setOnClickListener(this);
-                itemView.setLongClickable(true);
-                itemView.setOnLongClickListener(this);
-                this.title = (TextView) itemView.findViewById(R.id.notes_list_view_title);
-                this.text = (TextView) itemView.findViewById(R.id.notes_list_view_text);
-                this.card = (CardView) itemView.findViewById(R.id.notes_list_card_view);
-                innerList = list;
-            }
-
-            @Override
-            public void onClick(View v) {
-                //Обрабатывать клик
-                int adapterPosition = getAdapterPosition();
-                if (adapterPosition != RecyclerView.NO_POSITION) {
-                    listener.onItemClick(list.get(adapterPosition).getId());
-                }
-            }
-
-            @Override
-            public boolean onLongClick(View v) {
-                return false;
-            }
-        }
-    }
-
-
-
+    }, presenter);
 
     public interface NoteListener {
-        void onItemClick(String targetId);
+        void onItemClick(Note target);
     }
 
     public class SpacesItemDecoration extends RecyclerView.ItemDecoration
     {
         private int space;
-        public SpacesItemDecoration(int space) {
+        SpacesItemDecoration(int space) {
             this.space = space;
         }
 
@@ -371,4 +463,12 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
             outRect.bottom = space / 4;
         }
     }
+
+
+
+
+
+
+
+
 }

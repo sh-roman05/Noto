@@ -3,7 +3,10 @@ package com.roman.noto.data.repository;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.room.Room;
+import androidx.room.RoomDatabase;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.roman.noto.data.AppDatabase;
 import com.roman.noto.data.Note;
@@ -11,6 +14,7 @@ import com.roman.noto.data.NoteDao;
 import com.roman.noto.data.callback.DeleteArchiveNotesCallback;
 import com.roman.noto.data.callback.DeleteNoteCallback;
 import com.roman.noto.data.callback.GetFirstPositionCallback;
+import com.roman.noto.data.callback.GetHashtagsCallback;
 import com.roman.noto.data.callback.GetNoteCallback;
 import com.roman.noto.data.callback.LoadNotesCallback;
 import com.roman.noto.util.AppExecutors;
@@ -23,17 +27,25 @@ public class RoomRepository implements Repository {
 
     //TODO нужно ли обрабатывать исключения (EmptyResultSetException)
 
+    //TODO сменить имя базы на нормальное, в будущем придется писать миграцию
+
     static final String TAG = "RoomRepository";
     private static RoomRepository INSTANCE = null;
-    private String filename = "database12.db";
+    private String filename = "database16.db";
     private NoteDao dao;
     private AppDatabase db;
     private AppExecutors appExecutors;
 
 
-    private RoomRepository(AppExecutors appExecutors, Context context)
+    private RoomRepository(AppExecutors appExecutors, final Context context)
     {
-        this.db =  Room.databaseBuilder(context, AppDatabase.class, filename).build();
+        this.db =  Room.databaseBuilder(context, AppDatabase.class, filename).addCallback(new RoomDatabase.Callback() {
+            @Override
+            public void onCreate(@NonNull SupportSQLiteDatabase db) {
+                super.onCreate(db);
+                //https://medium.com/@srinuraop/database-create-and-open-callbacks-in-room-7ca98c3286ab
+            }
+        }).build();
         this.dao = db.noteDao();
         this.appExecutors = appExecutors;
     }
@@ -140,6 +152,11 @@ public class RoomRepository implements Repository {
             }
         };
         appExecutors.diskIO().execute(runnable);
+    }
+
+    @Override
+    public void getHashtags(GetHashtagsCallback callback) {
+        //
     }
 
     @Override
@@ -250,6 +267,15 @@ public class RoomRepository implements Repository {
 
 
             Note temp = new Note();
+
+            ArrayList<Integer> tempi = new ArrayList<>();
+            int cnt2 = Math.abs(rand.nextInt() % 5);
+            for (int j = 0; j < cnt2; j++) {
+                tempi.add(j);
+            }
+
+            temp.setHashtags(tempi);
+
             temp.setColor(color);
             temp.setTitle(title);
             temp.setText(text);

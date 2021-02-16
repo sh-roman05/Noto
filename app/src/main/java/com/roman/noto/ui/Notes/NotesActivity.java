@@ -29,10 +29,14 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.SubMenu;
 import android.view.View;
 import android.widget.ImageButton;
 
 
+import com.google.android.flexbox.FlexDirection;
+import com.google.android.flexbox.FlexboxLayoutManager;
+import com.google.android.flexbox.JustifyContent;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -75,6 +79,9 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
     //Замена Toolbar в режиме выделения заметок
     private ActionMode actionMode;
 
+    //Адаптер
+    NotesAdapter adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +104,29 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
         navigationView = findViewById(R.id.activity_notes_navigation);
         drawerLayout = findViewById(R.id.activity_notes_drawer);
         appBarLayout = findViewById(R.id.activity_notes_collapsing_appbar);
+
+        /* Передаем в Presenter - View и Repository */
+        presenter = new NotesPresenter(this, CacheRepository.getInstance(
+                LocalRepository.getRepository(
+                        new AppExecutors(), getApplicationContext()
+                )
+        ));
+
+
+        adapter = new NotesAdapter(new ArrayList<Note>(), new NoteListener() {
+            @Override
+            public void onItemClick(Note target) {
+                presenter.clickNote(target);
+            }
+        }, presenter);
+
+
+        //navigationView.getMenu().removeGroup();
+        //Menu menu = navigationView.getMenu();
+        //MenuItem item = menu.getItem(R.id.navigation_menu_group_hashtags);
+
+        //SubMenu sub = item.getSubMenu();
+
 
         View emptyView = findViewById(R.id.activity_notes_empty_view);
         mainNoteView.setEmptyView(emptyView);
@@ -143,12 +173,7 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
         });
 
 
-        /* Передаем в Presenter - View и Repository */
-        presenter = new NotesPresenter(this, CacheRepository.getInstance(
-                LocalRepository.getRepository(
-                        new AppExecutors(), getApplicationContext()
-                )
-        ));
+
 
 
 
@@ -185,10 +210,13 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
                 super.onItemStateChanged(key, selected);
                 if(actionMode == null)
                 {
-                    actionMode = startSupportActionMode(actionModeCallback);
-                    if(actionMode != null) actionMode.setTitle(String.valueOf(1));
-
-                }else {
+                    if(mSelectionTracker.hasSelection()){
+                        actionMode = startSupportActionMode(actionModeCallback);
+                        if(actionMode != null) {
+                            actionMode.setTitle(String.valueOf(1));
+                        }
+                    }
+                } else {
                     if(mSelectionTracker.hasSelection())
                     {
                         actionMode.setTitle(String.valueOf(mSelectionTracker.getSelection().size()));
@@ -247,6 +275,8 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
 
 
     }
+
+
 
 
     //Callback для отслеживания событий ActionMode
@@ -312,7 +342,12 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
                     //Закидываем адаптер
                     NotesSelectColorAdapter notesSelectColorAdapter = new NotesSelectColorAdapter(notesSelectColorListener);
                     colorList.setAdapter(notesSelectColorAdapter);
-                    colorList.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
+
+                    FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(getApplicationContext());
+                    layoutManager.setFlexDirection(FlexDirection.ROW);
+                    layoutManager.setJustifyContent(JustifyContent.FLEX_START);
+
+                    colorList.setLayoutManager(layoutManager);
                     //Создаем окно
                     dialog = new MaterialAlertDialogBuilder(NotesActivity.this)
                             .setTitle(getString(R.string.activity_notes_change_color_title))
@@ -361,7 +396,11 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
 
 
 
-
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        finish();
+    }
 
 
 
@@ -435,12 +474,7 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
         startActivity(intent);
     }
 
-    NotesAdapter adapter = new NotesAdapter(new ArrayList<Note>(), new NoteListener() {
-        @Override
-        public void onItemClick(Note target) {
-            presenter.clickNote(target);
-        }
-    }, presenter);
+
 
     public interface NoteListener {
         void onItemClick(Note target);

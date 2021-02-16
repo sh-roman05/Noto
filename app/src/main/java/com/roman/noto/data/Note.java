@@ -11,6 +11,7 @@ import androidx.room.PrimaryKey;
 
 import com.google.common.base.Strings;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 
@@ -43,26 +44,31 @@ public class Note implements Parcelable {
     @ColumnInfo(name = "lastChange")
     private Date lastChange;
 
+    @ColumnInfo(name = "hashtag")
+    private ArrayList<Integer> hashtags = new ArrayList<Integer>();
 
 
+    //Создание чистой заметки
     public Note() {
-        this(UUID.randomUUID().toString(), "", "", false, 0, false, 0, new Date());
+        this(UUID.randomUUID().toString(), "", "", false, 0, false, 0, new Date(), new ArrayList<Integer>());
     }
 
+    //Полное клонирование заметки
     @Ignore
     public Note(Note note)
     {
-        this(note.getId(), note.getTitle(), note.getText(), note.isArchive(), note.getColor(), note.isFixed(), note.getPosition(), (Date) note.getLastChange().clone());
+        this(note.getId(), note.getTitle(), note.getText(), note.isArchive(), note.getColor(), note.isFixed(), note.getPosition(), (Date) note.getLastChange().clone(), (ArrayList<Integer>) note.getHashtags().clone());
     }
 
+    //Полное клонирование заметки с новым id
     @Ignore
     public Note(Note note, UUID uuid)
     {
-        this(uuid.toString(), note.getTitle(), note.getText(), note.isArchive(), note.getColor(), note.isFixed(), note.getPosition(), (Date) note.getLastChange().clone());
+        this(uuid.toString(), note.getTitle(), note.getText(), note.isArchive(), note.getColor(), note.isFixed(), note.getPosition(), (Date) note.getLastChange().clone(), (ArrayList<Integer>) note.getHashtags().clone());
     }
 
     @Ignore
-    public Note(@NonNull String id, String title, String text, boolean archive, int color, boolean fixed, int position, Date lastChange) {
+    public Note(@NonNull String id, String title, String text, boolean archive, int color, boolean fixed, int position, Date lastChange, ArrayList<Integer> hashtags) {
         this.id = id;
         this.title = title;
         this.text = text;
@@ -71,8 +77,10 @@ public class Note implements Parcelable {
         this.fixed = fixed;
         this.position = position;
         this.lastChange = lastChange;
+        this.hashtags = hashtags;
     }
 
+    //todo: обновить при добавлении новых полей
     @Ignore
     protected Note(Parcel in) {
         id = in.readString();
@@ -84,10 +92,30 @@ public class Note implements Parcelable {
         position = in.readInt();
         long tmpLastChange = in.readLong();
         lastChange = tmpLastChange != -1 ? new Date(tmpLastChange) : null;
+        if (in.readByte() == 0x01) {
+            hashtags = new ArrayList<Integer>();
+            in.readList(hashtags, Integer.class.getClassLoader());
+        } else {
+            hashtags = null;
+        }
+    }
+
+    //todo: обновить при добавлении новых полей
+    //todo: сравнение всех хештегов
+    //Эквивалентны ли по содержанию
+    public boolean isEqual(Note note) {
+        boolean temp = true;
+        if (!title.equals(note.title)) temp = false;
+        if (!text.equals(note.text)) temp = false;
+        if (archive != note.archive) temp = false;
+        if (color != note.color) temp = false;
+        if (position != note.position) temp = false;
+        if (hashtags.size() != note.hashtags.size()) temp = false;
+        return temp;
     }
 
 
-    //Так же наличие картинок/звукозаписей
+    //todo: обновить при добавлении новых полей
     public boolean isEmpty() {
         return (
                 Strings.isNullOrEmpty(title) && Strings.isNullOrEmpty(text)
@@ -158,6 +186,15 @@ public class Note implements Parcelable {
         this.position = position;
     }
 
+    public ArrayList<Integer> getHashtags() {
+        return hashtags;
+    }
+
+    public void setHashtags(ArrayList<Integer> hashtags) {
+        this.hashtags = hashtags;
+    }
+
+    //todo: обновить при добавлении новых полей
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(id);
@@ -168,6 +205,12 @@ public class Note implements Parcelable {
         dest.writeByte((byte) (fixed ? 0x01 : 0x00));
         dest.writeInt(position);
         dest.writeLong(lastChange != null ? lastChange.getTime() : -1L);
+        if (hashtags == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeList(hashtags);
+        }
     }
 
     @Override

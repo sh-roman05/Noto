@@ -42,6 +42,7 @@ public class NoteDetailPresenter implements NoteDetailContract.Presenter {
     @Override
     public void cloneNote(Note note) {
         //Клонировать объект (Убрать двойное клонирование)
+        //Todo отправить в самый вверх
         Note temp = new Note(note, UUID.randomUUID());
         repository.saveNote(temp);
         view.returnToMain();

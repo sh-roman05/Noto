@@ -3,13 +3,17 @@ package com.roman.noto.ui.Notes;
 import android.util.Log;
 
 import com.roman.noto.data.callback.DeleteArchiveNotesCallback;
+import com.roman.noto.data.callback.GetHashtagsCallback;
+import com.roman.noto.data.callback.GetHashtagsForAdapterCallback;
 import com.roman.noto.data.callback.LoadNotesCallback;
 import com.roman.noto.data.Note;
 import com.roman.noto.data.repository.Repository;
 import com.roman.noto.util.NoteColor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class NotesPresenter implements NotesContract.Presenter
 {
@@ -122,6 +126,22 @@ public class NotesPresenter implements NotesContract.Presenter
             note.setColor(item.getIndex());
         //отправить дальше
         repository.updateNotes(notes);
+    }
+
+    //Получить хештеги
+    @Override
+    public void getHashtagsForAdapter(final GetHashtagsForAdapterCallback callback) {
+        repository.getHashtags(new GetHashtagsCallback() {
+            @Override
+            public void onDataNotAvailable() {
+                callback.onDataNotAvailable();
+            }
+
+            @Override
+            public void onHashtagsLoaded(Map<Integer, String> object) {
+                callback.onHashtagsLoaded(object);
+            }
+        });
     }
 
 

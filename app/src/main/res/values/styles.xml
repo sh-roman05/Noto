@@ -15,6 +15,21 @@
 
 
 
+    <style name="NoteChip" parent="Widget.MaterialComponents.Chip.Action">
+        <item name="chipCornerRadius">2dp</item>
+        <item name="chipMinHeight">20dp</item>
+        <item name="chipMinTouchTargetSize">0dp</item>
+        <item name="android:ellipsize">end</item>
+        <item name="rippleColor">@null</item>
+        <item name="android:clickable">false</item>
+        <item name="chipStartPadding">0dp</item>
+        <item name="chipEndPadding">2dp</item>
+    </style>
+
+    <style name="NoteDetailChip" parent="Widget.MaterialComponents.Chip.Action">
+
+    </style>
+
 
 
 </resources>

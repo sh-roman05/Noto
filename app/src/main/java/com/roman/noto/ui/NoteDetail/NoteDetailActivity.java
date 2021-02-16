@@ -2,17 +2,25 @@ package com.roman.noto.ui.NoteDetail;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 
@@ -20,6 +28,9 @@ import com.roman.noto.data.Note;
 import com.roman.noto.R;
 import com.roman.noto.data.repository.CacheRepository;
 import com.roman.noto.data.repository.LocalRepository;
+import com.roman.noto.ui.ChooseHashtags.ChooseHashtagsActivity;
+import com.roman.noto.ui.Notes.NotesActivity;
+import com.roman.noto.ui.Settings.SettingsActivity;
 import com.roman.noto.util.AppExecutors;
 import com.roman.noto.util.NoteColor;
 
@@ -40,6 +51,15 @@ public class NoteDetailActivity extends AppCompatActivity implements NoteDetailC
     private EditText text;
     private TextView lastChange;
 
+    ConstraintLayout scrollView;
+
+    //Была ли активити вызвана с shortcut
+    boolean shortcut;
+
+    //Заглушка для перекидывания выделения
+    View empty;
+
+
     //Меню
     private NoteDetailDialogFragment bottomSheetDialogFragment;
 
@@ -59,7 +79,10 @@ public class NoteDetailActivity extends AppCompatActivity implements NoteDetailC
         text = findViewById(R.id.activity_note_detail_text);
         layout = findViewById(R.id.activity_note_detail_layout);
         lastChange = findViewById(R.id.activity_note_detail_last_change);
+        empty = findViewById(R.id.activity_note_detail_empty);
+        scrollView = findViewById(R.id.activity_note_detail_container);
         bottomSheetDialogFragment = new NoteDetailDialogFragment(menuCallback);
+
 
         //повторное создание пустых AppExecutors, стоит убрать
         presenter = new NoteDetailPresenter(this, CacheRepository.getInstance(
@@ -73,10 +96,12 @@ public class NoteDetailActivity extends AppCompatActivity implements NoteDetailC
         if(from != null) {
             switch (from) {
                 case "shortcut_new_note":
+                    shortcut = true;
                     //Создать новую заметку
                     presenter.createNote();
                     break;
                 case "main_edit_note":
+                    shortcut = false;
                     //Редактировать
                     Note id = getIntent().getParcelableExtra("note");
                     presenter.loadNote(id);
@@ -84,6 +109,29 @@ public class NoteDetailActivity extends AppCompatActivity implements NoteDetailC
             }
         }
 
+
+        scrollView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //text
+                text.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(isHardwareKeyboardAvailable(getApplicationContext())){
+                            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                            inputMethodManager.toggleSoftInputFromWindow(text.getApplicationWindowToken(),InputMethodManager.SHOW_IMPLICIT, 0);
+                        }
+                        text.requestFocus();
+                        text.setSelection(text.getText().length());
+                    }
+                });
+            }
+        });
+    }
+
+    //Проверить на наличие физической клавиатуры
+    private boolean isHardwareKeyboardAvailable(Context context) {
+        return context.getResources().getConfiguration().keyboard != Configuration.KEYBOARD_NOKEYS;
     }
 
 
@@ -117,6 +165,13 @@ public class NoteDetailActivity extends AppCompatActivity implements NoteDetailC
             //Сохранить цвет
             note.setColor(color.getIndex());
         }
+
+        @Override
+        public void hashtag() {
+            Intent intent = new Intent(getApplicationContext(), ChooseHashtagsActivity.class);
+            intent.putExtra("note", note);
+            startActivity(intent);
+        }
     };
 
 
@@ -135,16 +190,10 @@ public class NoteDetailActivity extends AppCompatActivity implements NoteDetailC
 
     void saveNote()
     {
-        boolean isEqual = note.getTitle().equals(title.getText().toString())
-                && note.getText().equals(text.getText().toString());
-
-        if(!isEqual)
-        {
-            note.setTitle(title.getText().toString());
-            note.setText(text.getText().toString());
-            note.setLastChange(new Date());
-            presenter.saveNote(note);
-        }
+        note.setTitle(title.getText().toString());
+        note.setText(text.getText().toString());
+        note.setLastChange(new Date());
+        presenter.saveNote(note);
     }
 
 
@@ -162,6 +211,14 @@ public class NoteDetailActivity extends AppCompatActivity implements NoteDetailC
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                if(shortcut) {
+                    Intent intent = new Intent(getApplicationContext(), NotesActivity.class);
+                    startActivity(intent);
+                } else {
+                    finish();
+                }
+                return true;
             //Восстановить заметку
             //Снять блокировку редактирования
             case R.id.activity_note_detail_toolbar_restore:
@@ -224,6 +281,11 @@ public class NoteDetailActivity extends AppCompatActivity implements NoteDetailC
         layout.setBackgroundColor(Color.parseColor(color.getColorBackground()));
         //Toolbar
         toolbar.setBackgroundColor(Color.parseColor(color.getColorPrimaryDark()));
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     @Override

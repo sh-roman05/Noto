@@ -26,26 +26,30 @@
 
         <ScrollView
             android:id="@+id/activity_note_scroll_view"
+            android:fillViewport="true"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <LinearLayout
+            android:layout_height="match_parent">
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
+                android:id="@+id/activity_note_detail_container"
+                android:clickable="true"
+                android:focusable="true"
                 android:orientation="vertical">
-
-
                 <EditText
                     android:id="@+id/activity_note_detail_title"
+                    app:layout_constraintTop_toTopOf="parent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"
                     android:background="@android:color/transparent"
                     android:hint="@string/activity_note_detail_title"
                     android:inputType="textPersonName"
-                    android:textSize="18sp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
+                    android:paddingTop="15dp"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"
+                    android:paddingBottom="7dp"
                     android:importantForAutofill="no" />
 
                 <EditText
@@ -54,33 +58,32 @@
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
                     android:hint="@string/activity_note_detail_text"
+                    android:importantForAutofill="no"
                     android:inputType="textMultiLine"
                     android:textSize="18sp"
-                    android:layout_marginBottom="12dp"
-                    android:importantForAutofill="no"/>
+                    android:paddingTop="7dp"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"
+                    android:paddingBottom="15dp"
+                    app:layout_constraintTop_toBottomOf="@+id/activity_note_detail_title" />
+
+                <View
+                    android:id="@+id/activity_note_detail_empty"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_constraintTop_toBottomOf="@+id/activity_note_detail_text"
+                    app:layout_constraintBottom_toTopOf="@+id/activity_note_detail_last_change"/>
 
                 <TextView
                     android:id="@+id/activity_note_detail_last_change"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-
-            </LinearLayout>
-
+                    android:layout_height="wrap_content"
+                    android:padding="15dp"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
 
     </LinearLayout>
-
-
-
-
-
-
-
-
-
-
-
-
 
     <!-- Для эффекта затемнения -->
     <View

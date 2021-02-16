@@ -33,4 +33,6 @@
     <string name="activity_note_detail_action_archive">Delete</string>
     <string name="activity_note_detail_action_share">Share</string>
     <string name="activity_notes_change_color_title">Color selection</string>
+    <string name="activity_notes_search">Search</string>
+    <string name="activity_note_detail_action_hashtag">Hashtag</string>
 </resources>

@@ -33,6 +33,7 @@ public class NoteDetailDialogFragment extends BottomSheetDialogFragment
         void archive();
         void share();
         void selectColor(NoteColor.ItemColor color);
+        void hashtag();
     }
 
     private BottomMenuCallback callback;
@@ -64,6 +65,14 @@ public class NoteDetailDialogFragment extends BottomSheetDialogFragment
             public void onClick(View view) {
                 dismiss();
                 callback.copy();
+            }
+        });
+        LinearLayout action_hashtag = (LinearLayout) contentView.findViewById(R.id.activity_note_detail_action_hashtags);
+        action_hashtag.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismiss();
+                callback.hashtag();
             }
         });
         LinearLayout action_share = (LinearLayout) contentView.findViewById(R.id.activity_note_detail_action_share);

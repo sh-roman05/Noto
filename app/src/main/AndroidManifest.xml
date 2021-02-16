@@ -6,26 +6,29 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".ui.ChooseHashtags.ChooseHashtagsActivity"></activity>
         <activity
             android:name=".ui.Settings.SettingsActivity"
-            android:parentActivityName=".ui.Notes.NotesActivity"/>
+            android:parentActivityName=".ui.Notes.NotesActivity" />
         <activity
             android:name=".ui.About.AboutActivity"
-            android:parentActivityName=".ui.Notes.NotesActivity"/>
+            android:parentActivityName=".ui.Notes.NotesActivity" />
         <activity
             android:name=".ui.NoteDetail.NoteDetailActivity"
-            android:parentActivityName=".ui.Notes.NotesActivity"
-            />
+            android:parentActivityName=".ui.Notes.NotesActivity" />
         <activity android:name=".ui.Notes.NotesActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <meta-data android:name="android.app.shortcuts"
+
+            <meta-data
+                android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
         </activity>
     </application>

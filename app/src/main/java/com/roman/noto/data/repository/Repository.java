@@ -4,6 +4,7 @@ import com.roman.noto.data.Note;
 import com.roman.noto.data.callback.DeleteArchiveNotesCallback;
 import com.roman.noto.data.callback.DeleteNoteCallback;
 import com.roman.noto.data.callback.GetFirstPositionCallback;
+import com.roman.noto.data.callback.GetHashtagsCallback;
 import com.roman.noto.data.callback.GetNoteCallback;
 import com.roman.noto.data.callback.LoadNotesCallback;
 
@@ -11,34 +12,35 @@ import java.util.List;
 
 public interface Repository {
 
-    void saveNote(Note note);
-    void swapNotes(Note fromPosition, Note toPosition);
+    //Получить первую позицию
+    void getFirstPosition(final GetFirstPositionCallback callback);
+    //Удалить все таблицы
+    void clearAllTables();
+
+    //Обновить данные в заметке
+    void updateNote(Note note);
+    //Удалить заметку из базы
+    void deleteNote(Note note, final DeleteNoteCallback callback);
+    //Получить заметку по id
     void getNote(String id, GetNoteCallback callback);
+    //Сохранить заметку
+    void saveNote(Note note);
+    //Поменять заметки местами
+    void swapNotes(Note fromPosition, Note toPosition);
 
-
+    //Обновить заметки из списка
+    void updateNotes(List<Note> notes);
+    //Удалить заметки по списку
+    void deleteNotes(List<Note> notes);
     //Получить не удаленные заметки
     void getNotes(final LoadNotesCallback callback);
     //Получить удаленные заметки
     void getArchivedNotes(final LoadNotesCallback callback);
-    //Обновить данные в заметке
-    void updateNote(Note note);
-
-    //Получить первую позицию
-    void getFirstPosition(final GetFirstPositionCallback callback);
-
-    //Удалить все таблицы
-    void clearAllTables();
-
     //Удалить архивные заметки
     void clearArchiveNotes(final DeleteArchiveNotesCallback callback);
 
-
-    //Удалить заметку из базы
-    void deleteNote(Note note, final DeleteNoteCallback callback);
-
-    //Обновить заметки из списка
-    void updateNotes(List<Note> notes);
-
-    //Удалить заметки по списку
-    void deleteNotes(List<Note> notes);
+    //Получить все хештеги
+    void getHashtags(final GetHashtagsCallback callback);
+    //Удалить хештег
+    //Добавить хештег
 }

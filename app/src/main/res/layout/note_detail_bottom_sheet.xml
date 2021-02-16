@@ -4,7 +4,7 @@
     android:id="@+id/bottom_sheet"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/white"
+    android:background="#ffffff"
     android:orientation="vertical"
     android:paddingTop="10dp"
     android:paddingBottom="10dp">
@@ -54,6 +54,25 @@
             android:padding="10dp"
             app:drawableTint="@color/notesDetailPanelIcon"
             android:text="@string/activity_note_detail_action_share" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/activity_note_detail_action_hashtags"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:drawableStart="@drawable/ic_hashtag"
+            android:drawablePadding="20dp"
+            android:textSize="16sp"
+            android:padding="10dp"
+            app:drawableTint="@color/notesDetailPanelIcon"
+            android:text="@string/activity_note_detail_action_hashtag" />
     </LinearLayout>
 
     <LinearLayout

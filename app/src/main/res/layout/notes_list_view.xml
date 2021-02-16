@@ -9,7 +9,7 @@
         android:id="@+id/notes_list_card_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:cardCornerRadius="0dp"
+        app:cardCornerRadius="2dp"
         app:cardUseCompatPadding="true"
         >
 
@@ -27,7 +27,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
-                android:maxLines = "2"/>
+                android:maxLines="2"/>
 
             <!-- Основной текст -->
             <TextView
@@ -36,6 +36,32 @@
                 android:layout_height="wrap_content"
                 android:maxLines = "12"/>
 
+            <!-- Хештеги -->
+            <com.google.android.material.chip.ChipGroup
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:chipSpacingVertical="5dp"
+                app:chipSpacingHorizontal="5dp">
+                <com.google.android.material.chip.Chip
+                    android:visibility="gone"
+                    android:id="@+id/notes_list_view_chip1"
+                    style="@style/NoteChip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <com.google.android.material.chip.Chip
+                    android:visibility="gone"
+                    android:id="@+id/notes_list_view_chip2"
+                    style="@style/NoteChip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <com.google.android.material.chip.Chip
+                    android:visibility="gone"
+                    android:id="@+id/notes_list_view_chip3"
+                    style="@style/NoteChip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </com.google.android.material.chip.ChipGroup>
         </LinearLayout>
 
         <!-- Затемняющий слой View -->
@@ -46,7 +72,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:stateListAnimator="@xml/note_view_item_selected">
-
             <!-- Иконка -->
             <View
                 android:id="@+id/notes_list_card_view_select_round"
@@ -58,9 +83,7 @@
                 android:layout_marginBottom="12dp"
                 android:layout_alignParentEnd="true"
                 android:stateListAnimator="@xml/note_view_item_selected_icon" />
-
         </RelativeLayout>
-
     </com.google.android.material.card.MaterialCardView>
 
 </FrameLayout>

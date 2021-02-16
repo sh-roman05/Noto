@@ -2,6 +2,7 @@ package com.roman.noto.ui.Notes;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,27 +17,53 @@ import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.chip.Chip;
 import com.google.common.base.Strings;
 import com.roman.noto.NoteTouchHelperClass;
 import com.roman.noto.R;
 import com.roman.noto.data.Note;
+import com.roman.noto.data.callback.GetHashtagsForAdapterCallback;
 import com.roman.noto.util.NoteColor;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHolder> implements NoteTouchHelperClass.ItemTouchHelperAdapter {
+
+    static final String TAG = "NotesAdapter";
+
+
     private List<Note> list = new ArrayList<>();
     private NotesActivity.NoteListener listener;
     private SelectionTracker<Note> mSelectionTracker;
 
     private NotesContract.Presenter presenter;
 
+    //Нужно хранить актуальную версию
+    Map<Integer, String> hashtags;
+
     NotesAdapter(List<Note> notes, NotesActivity.NoteListener listener, NotesContract.Presenter presenter) {
         setList(notes);
         this.listener = listener;
         this.presenter = presenter;
+
+        //Запросить список хештегов
+        presenter.getHashtagsForAdapter(new GetHashtagsForAdapterCallback() {
+            @Override
+            public void onDataNotAvailable() {
+                hashtags = new HashMap<>();
+            }
+
+            @Override
+            public void onHashtagsLoaded(Map<Integer, String> object) {
+                hashtags = object;
+            }
+        });
+
     }
 
     //Список элементов, у которых нужно изменить цвет
@@ -105,6 +132,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
 
     @Override
     public void onItemMoved(int fromPosition, int toPosition) {
+        Log.d(TAG, "onItemMoved: from:" + fromPosition + " to:" + toPosition);
         presenter.swapNotes(list.get(fromPosition), list.get(toPosition));
         Collections.swap(list, fromPosition, toPosition);
         notifyItemMoved(fromPosition, toPosition);
@@ -128,6 +156,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
         MaterialCardView card;
         View selectOverlay;
         View selectRound;
+        Chip chip1, chip2, chip3;
 
         NoteViewHolder(View itemView) {
             super(itemView);
@@ -141,7 +170,9 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
             this.card = itemView.findViewById(R.id.notes_list_card_view);
             this.selectOverlay = itemView.findViewById(R.id.notes_list_card_view_select_overlay);
             this.selectRound = itemView.findViewById(R.id.notes_list_card_view_select_round);
-
+            this.chip1 = itemView.findViewById(R.id.notes_list_view_chip1);
+            this.chip2 = itemView.findViewById(R.id.notes_list_view_chip2);
+            this.chip3 = itemView.findViewById(R.id.notes_list_view_chip3);
         }
 
         ItemDetailsLookup.ItemDetails<Note> getItemDetails() {
@@ -153,11 +184,16 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
             //Обрабатывать клик
             int adapterPosition = getAdapterPosition();
             if (adapterPosition != RecyclerView.NO_POSITION) {
-                listener.onItemClick(list.get(adapterPosition));
+
+                if (mSelectionTracker != null && !mSelectionTracker.hasSelection())
+                    listener.onItemClick(list.get(adapterPosition));
+
+
             }
         }
 
 
+        @SuppressLint("SetTextI18n")
         void bind(int position, boolean isSelected, Note item)
         {
             if(Strings.isNullOrEmpty(item.getTitle())) {
@@ -173,10 +209,60 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
                 text.setText(item.getText());
             }
 
+            //Применить цвет заметки
             card.setCardBackgroundColor(Color.parseColor(NoteColor.getInstance().getItemColor(item.getColor()).getColorBackground()));
 
-            selectOverlay.setActivated(isSelected);
+            //Получаем список id прикрепленных хештегов
+            ArrayList<Integer> hashId = item.getHashtags();
+            hashId = new ArrayList<Integer>();
 
+            //
+            hashId.add(1);hashId.add(3);
+
+
+            ArrayList<String> hashName = new ArrayList<>();
+            Iterator iter =  hashId.iterator();
+            while (iter.hasNext())
+            {
+                String name = hashtags.get((Integer) iter.next());
+                if(name != null) hashName.add(name);
+            }
+
+            //todo если мы во вкладке по определенному тегу, то в списке показать его первым
+
+
+
+            //hashName - тут строки которые можно показать
+            chip1.setVisibility(View.GONE);
+            chip2.setVisibility(View.GONE);
+            chip3.setVisibility(View.GONE);
+
+
+            if(hashName.size() == 1) {
+                chip1.setText(hashName.get(0));
+                chip1.setVisibility(View.VISIBLE);
+            } else if(hashName.size() == 2){
+                chip1.setText(hashName.get(0));
+                chip2.setText(hashName.get(1));
+                chip1.setVisibility(View.VISIBLE);
+                chip2.setVisibility(View.VISIBLE);
+            } else if(hashName.size() == 3){
+                chip1.setText(hashName.get(0));
+                chip2.setText(hashName.get(1));
+                chip3.setText(hashName.get(2));
+                chip1.setVisibility(View.VISIBLE);
+                chip2.setVisibility(View.VISIBLE);
+                chip3.setVisibility(View.VISIBLE);
+            } else if(hashName.size() > 3) {
+                chip1.setText(hashName.get(0));
+                chip2.setText(hashName.get(1));
+                chip3.setText("+ еще " + (hashName.size() - 2));
+                chip1.setVisibility(View.VISIBLE);
+                chip2.setVisibility(View.VISIBLE);
+                chip3.setVisibility(View.VISIBLE);
+            }
+
+            selectOverlay.setActivated(isSelected);
         }
 
         @Override
@@ -184,8 +270,6 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
             return true;
         }
     }
-
-
 
 
     //Добавил static

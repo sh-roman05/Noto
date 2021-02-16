@@ -6,12 +6,14 @@ import com.roman.noto.data.Note;
 import com.roman.noto.data.callback.DeleteArchiveNotesCallback;
 import com.roman.noto.data.callback.DeleteNoteCallback;
 import com.roman.noto.data.callback.GetFirstPositionCallback;
+import com.roman.noto.data.callback.GetHashtagsCallback;
 import com.roman.noto.data.callback.GetNoteCallback;
 import com.roman.noto.data.callback.LoadNotesCallback;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -25,13 +27,15 @@ public class CacheRepository implements Repository
     //TODO нужен ли переход на PriorityQueue
     static final String TAG = "CacheRepository";
     private static CacheRepository INSTANCE = null;
+    //Ссылка на реальный репозиторий
     private final Repository repository;
 
     private CacheRepository(Repository repository) {
         this.repository = repository;
     }
 
-    public static CacheRepository getInstance(Repository repository) {
+    //todo переделать singlton, doublechecking
+    public static Repository getInstance(Repository repository) {
         if (INSTANCE == null) {
             INSTANCE = new CacheRepository(repository);
         }
@@ -88,11 +92,30 @@ public class CacheRepository implements Repository
         Note temp = new Note(note);
         //Создать кеш, если данных нет
         createCasheIsNull();
-        //Обновить данные
-        cachedNotes.put(temp.getId(), temp);
-        //Внести изменения в базу
-        repository.updateNote(temp);
+        //Нужно ли сохранять или обновлять
+        Note casheNote = cachedNotes.get(temp.getId());
+        if (casheNote == null) {
+            //Этой заметки нет. Значит просто сохраняем.
+
+            //todo: position может быть null. нужно и его запрашивать тогда.
+            //Так как заметка новая, отправляем ее вверх.
+            if(position != null) temp.setPosition(--position);
+
+            cachedNotes.put(temp.getId(), temp);
+            //Внести изменения в базу
+            repository.saveNote(temp);
+        } else {
+            //Заметка существует. Сравнить и обновить если надо.
+            if(!casheNote.isEqual(temp)){
+                //Обновить в кеше
+                cachedNotes.put(temp.getId(), temp);
+                //Обновить в базе
+                repository.updateNote(temp);
+            }
+        }
     }
+
+
 
     @Override
     public void getFirstPosition(GetFirstPositionCallback callback) {
@@ -130,6 +153,20 @@ public class CacheRepository implements Repository
                 callback.onArchiveCleaned();
             }
         });
+    }
+
+    //todo хеш теги кеш временный
+    @Override
+    public void getHashtags(GetHashtagsCallback callback) {
+        HashMap<Integer, String> hashtags;
+        hashtags = new HashMap<>();
+        hashtags.put(0, "Учеба");
+        hashtags.put(1, "Работа");
+        hashtags.put(2, "Полезное");
+        hashtags.put(3, "Купить");
+        hashtags.put(4, "Посмотреть");
+        hashtags.put(5, "Важное");
+        callback.onHashtagsLoaded(hashtags);
     }
 
     @Override

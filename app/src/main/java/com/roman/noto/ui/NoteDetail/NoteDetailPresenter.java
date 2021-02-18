@@ -3,10 +3,13 @@ package com.roman.noto.ui.NoteDetail;
 import android.util.Log;
 
 import com.roman.noto.data.callback.DeleteNoteCallback;
+import com.roman.noto.data.callback.GetHashtagsCallback;
 import com.roman.noto.data.callback.GetNoteCallback;
 import com.roman.noto.data.Note;
 import com.roman.noto.data.repository.Repository;
 
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.UUID;
 
 public class NoteDetailPresenter implements NoteDetailContract.Presenter {
@@ -22,9 +25,21 @@ public class NoteDetailPresenter implements NoteDetailContract.Presenter {
         this.repository = repository;
     }
 
+    //Использовать только id и запросить из репозитория
     @Override
     public void loadNote(Note note) {
-        view.noteView(note);
+
+        repository.getNote(note.getId(), new GetNoteCallback() {
+            @Override
+            public void onDataNotAvailable() {
+                //
+            }
+
+            @Override
+            public void onNoteLoaded(Note note) {
+                view.noteView(note);
+            }
+        });
     }
 
     @Override
@@ -75,5 +90,24 @@ public class NoteDetailPresenter implements NoteDetailContract.Presenter {
         note.setArchive(false);
         repository.updateNote(note);
         view.noteView(note);
+    }
+
+    //Получить названия хэштегов по id сохраненных в заметке
+    @Override
+    public void getHashtags(final Note note) {
+        repository.getHashtags(new GetHashtagsCallback() {
+            @Override
+            public void onDataNotAvailable() { }
+
+            @Override
+            public void onHashtagsLoaded(Map<Integer, String> object) {
+                ArrayList<String> temp = new ArrayList<>();
+                for (int hashId: note.getHashtags()) {
+                    String hashStr = object.get(hashId);
+                    if(hashStr != null) temp.add(hashStr);
+                }
+                view.hashtagsShow(temp);
+            }
+        });
     }
 }

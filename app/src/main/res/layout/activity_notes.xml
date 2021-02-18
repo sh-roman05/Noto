@@ -42,14 +42,20 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
+
         <com.roman.noto.RecyclerViewEmptySupport
             android:id="@+id/activity_notes_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#ffffff"
             android:clipToPadding="false"
-            android:padding="4dp"
+            android:paddingTop="4dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:paddingBottom="40dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+
 
 
 
@@ -80,8 +86,7 @@
                 android:layout_height="80dp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_event_note"
-                android:tint="#555"
-                />
+                app:tint="#555" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

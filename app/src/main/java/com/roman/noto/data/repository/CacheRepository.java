@@ -1,5 +1,7 @@
 package com.roman.noto.data.repository;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.roman.noto.data.Note;
@@ -106,12 +108,15 @@ public class CacheRepository implements Repository
             repository.saveNote(temp);
         } else {
             //Заметка существует. Сравнить и обновить если надо.
-            if(!casheNote.isEqual(temp)){
-                //Обновить в кеше
-                cachedNotes.put(temp.getId(), temp);
-                //Обновить в базе
-                repository.updateNote(temp);
-            }
+            //Проверять в будущем
+            //if(!casheNote.isEqual(temp))
+
+            Log.d(TAG, "updateNote, size: " + temp.getHashtags().size());
+
+            //Обновить в кеше
+            cachedNotes.put(temp.getId(), temp);
+            //Обновить в базе
+            repository.updateNote(temp);
         }
     }
 
@@ -238,6 +243,7 @@ public class CacheRepository implements Repository
         });
     }
 
+    //Сохранение новой заметки
     @Override
     public void saveNote(@NonNull final Note note) {
         createCasheIsNull();

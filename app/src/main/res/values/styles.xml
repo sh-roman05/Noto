@@ -26,9 +26,6 @@
         <item name="chipEndPadding">2dp</item>
     </style>
 
-    <style name="NoteDetailChip" parent="Widget.MaterialComponents.Chip.Action">
-
-    </style>
 
 
 

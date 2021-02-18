@@ -34,6 +34,11 @@ import java.util.Map;
 
 public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHolder> implements NoteTouchHelperClass.ItemTouchHelperAdapter {
 
+
+    //Строка "+ еще"
+    String moreString;
+
+
     static final String TAG = "NotesAdapter";
 
 
@@ -46,10 +51,12 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
     //Нужно хранить актуальную версию
     Map<Integer, String> hashtags;
 
-    NotesAdapter(List<Note> notes, NotesActivity.NoteListener listener, NotesContract.Presenter presenter) {
+    NotesAdapter(List<Note> notes, NotesActivity.NoteListener listener, NotesContract.Presenter presenter, String moreString) {
         setList(notes);
         this.listener = listener;
         this.presenter = presenter;
+        this.moreString = moreString;
+
 
         //Запросить список хештегов
         presenter.getHashtagsForAdapter(new GetHashtagsForAdapterCallback() {
@@ -82,6 +89,11 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
             list.remove(pos);
             notifyItemRemoved(pos);
         }
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return list.get(position).hashCode();
     }
 
 
@@ -134,8 +146,10 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
     public void onItemMoved(int fromPosition, int toPosition) {
         Log.d(TAG, "onItemMoved: from:" + fromPosition + " to:" + toPosition);
         presenter.swapNotes(list.get(fromPosition), list.get(toPosition));
-        Collections.swap(list, fromPosition, toPosition);
         notifyItemMoved(fromPosition, toPosition);
+        Collections.swap(list, fromPosition, toPosition);
+        //При перемещении заметки, отключить режим выделения, если был включен
+        if(mSelectionTracker.hasSelection()) mSelectionTracker.clearSelection();
     }
 
     @Override
@@ -214,11 +228,6 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
 
             //Получаем список id прикрепленных хештегов
             ArrayList<Integer> hashId = item.getHashtags();
-            hashId = new ArrayList<Integer>();
-
-            //
-            hashId.add(1);hashId.add(3);
-
 
             ArrayList<String> hashName = new ArrayList<>();
             Iterator iter =  hashId.iterator();
@@ -256,7 +265,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
             } else if(hashName.size() > 3) {
                 chip1.setText(hashName.get(0));
                 chip2.setText(hashName.get(1));
-                chip3.setText("+ еще " + (hashName.size() - 2));
+                chip3.setText("+ " + moreString + " " + (hashName.size() - 2)); //todo тут нет английского варианта
                 chip1.setVisibility(View.VISIBLE);
                 chip2.setVisibility(View.VISIBLE);
                 chip3.setVisibility(View.VISIBLE);

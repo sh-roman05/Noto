@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 
 
 import com.roman.noto.R;
@@ -22,7 +23,7 @@ public class AboutActivity extends AppCompatActivity implements AboutContract.Vi
         setContentView(R.layout.activity_about);
         Toolbar toolbar = findViewById(R.id.activity_about_toolbar);
         setSupportActionBar(toolbar);
-        if(getSupportActionBar()!= null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if(getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         presenter = new AboutPresenter(this, CacheRepository.getInstance(
                 LocalRepository.getRepository(
@@ -35,5 +36,14 @@ public class AboutActivity extends AppCompatActivity implements AboutContract.Vi
                 .replace(R.id.activity_about_fragment, new AboutFragment())
                 .commit();
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

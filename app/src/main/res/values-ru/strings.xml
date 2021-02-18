@@ -35,4 +35,6 @@
     <string name="activity_notes_change_color_title">Выбор цвета</string>
     <string name="activity_notes_search">Поиск</string>
     <string name="activity_note_detail_action_hashtag">Хэштег</string>
+    <string name="activity_choose_hashtag_empty">У вас нет хэштегов</string>
+    <string name="activity_notes_hashtag_more">еще</string>
 </resources>

@@ -63,6 +63,11 @@ import java.util.Objects;
 
 public class NotesActivity extends AppCompatActivity implements NotesContract.View {
 
+    /*
+     * 1) Проблема с соответствием с данными в RecyclerView решилась через getItemId и setHasStableIds(true),
+     *    но анимация стала рваной.
+     * */
+
     static final String TAG = "NotesActivity";
 
     public NotesContract.Presenter presenter;
@@ -118,18 +123,16 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
             public void onItemClick(Note target) {
                 presenter.clickNote(target);
             }
-        }, presenter);
+        }, presenter, getResources().getString(R.string.activity_notes_hashtag_more));
 
+        adapter.setHasStableIds(true);
 
-        //navigationView.getMenu().removeGroup();
-        //Menu menu = navigationView.getMenu();
-        //MenuItem item = menu.getItem(R.id.navigation_menu_group_hashtags);
-
-        //SubMenu sub = item.getSubMenu();
 
 
         View emptyView = findViewById(R.id.activity_notes_empty_view);
         mainNoteView.setEmptyView(emptyView);
+
+
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -215,6 +218,7 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
                         if(actionMode != null) {
                             actionMode.setTitle(String.valueOf(1));
                         }
+                        //adapter.notifyDataSetChanged();
                     }
                 } else {
                     if(mSelectionTracker.hasSelection())
@@ -273,6 +277,10 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
             }
         });
 
+
+        //Отключить переиспользование элементов
+        //При большом количестве элементов
+        //mainNoteView.getRecycledViewPool().setMaxRecycledViews(0,0);
 
     }
 

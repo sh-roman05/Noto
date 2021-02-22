@@ -14,7 +14,7 @@
     </style>
 
 
-
+    <!-- Хештег -->
     <style name="NoteChip" parent="Widget.MaterialComponents.Chip.Action">
         <item name="chipCornerRadius">2dp</item>
         <item name="chipMinHeight">20dp</item>
@@ -24,6 +24,45 @@
         <item name="android:clickable">false</item>
         <item name="chipStartPadding">0dp</item>
         <item name="chipEndPadding">2dp</item>
+    </style>
+
+    <!-- Кнопка в навигации -->
+    <style name="NvButton">
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    <style name="NvButtonContainer">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:layout_marginEnd">8dp</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:layout_marginBottom">4dp</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:background">@drawable/nv_button</item>
+        <item name="android:paddingStart">5dp</item>
+        <item name="android:paddingEnd">5dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+    </style>
+    <style name="NvButtonIcon">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">10dp</item>
+        <item name="android:layout_marginEnd">10dp</item>
+    </style>
+    <style name="NvButtonText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">4dp</item>
+        <item name="android:layout_marginEnd">4dp</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/nv_button_text</item>
     </style>
 
 

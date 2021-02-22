@@ -13,6 +13,7 @@ import androidx.recyclerview.selection.OnDragInitiatedListener;
 import androidx.recyclerview.selection.SelectionPredicates;
 import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.selection.StorageStrategy;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -43,6 +44,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.common.collect.Lists;
 import com.roman.noto.RecyclerViewEmptySupport;
+import com.roman.noto.data.Hashtag;
+import com.roman.noto.data.repository.NavigationHashtag;
 import com.roman.noto.ui.About.AboutActivity;
 import com.roman.noto.data.Note;
 import com.roman.noto.ui.Settings.SettingsActivity;
@@ -73,8 +76,7 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
     public NotesContract.Presenter presenter;
     RecyclerViewEmptySupport mainNoteView;
     FloatingActionButton addNoteButton;
-    NavigationView navigationView;
-    DrawerLayout drawerLayout;
+
     //Toolbar
     Toolbar toolbar;
     AppBarLayout appBarLayout;
@@ -86,6 +88,20 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
 
     //Адаптер
     NotesAdapter adapter;
+
+    //NavigationView
+    View buttonNotes, buttonDelete, buttonSettings, buttonAbout, buttonAddHashtag;
+    View nvNoHashtags, nvHasHashtags;
+    NavigationView navigationView;
+    DrawerLayout drawerLayout;
+
+    //NotesState
+    NotesState state = NotesState.NOTES;
+
+    //Хештеги в навигации
+    RecyclerView navHashtagsRecyclerView;
+    NotesHashtagsAdapter hashtagsAdapter;
+    List<NavigationHashtag> navHashtagsList;
 
 
     @Override
@@ -106,9 +122,29 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
         //Инициализация
         mainNoteView = findViewById(R.id.activity_notes_list);
         addNoteButton = findViewById(R.id.activity_notes_add_button);
+        appBarLayout = findViewById(R.id.activity_notes_collapsing_appbar);
+        //NavigationView
+        buttonNotes = findViewById(R.id.activity_notes_nv_notes);
+        buttonDelete = findViewById(R.id.activity_notes_nv_delete);
+        buttonSettings = findViewById(R.id.activity_notes_nv_settings);
+        buttonAbout = findViewById(R.id.activity_notes_nv_about);
+        buttonAddHashtag = findViewById(R.id.activity_notes_nv_add_hashtag);
+        navHashtagsRecyclerView = findViewById(R.id.activity_notes_hashtags_list);
         navigationView = findViewById(R.id.activity_notes_navigation);
         drawerLayout = findViewById(R.id.activity_notes_drawer);
-        appBarLayout = findViewById(R.id.activity_notes_collapsing_appbar);
+        nvNoHashtags = findViewById(R.id.activity_notes_nv_no_hashtags);
+        nvHasHashtags = findViewById(R.id.activity_notes_nv_has_hashtags);
+        //
+        //
+        //Выделенная по умолчанию кнопка
+        navSelectNotes();
+
+
+
+
+
+
+
 
         /* Передаем в Presenter - View и Repository */
         presenter = new NotesPresenter(this, CacheRepository.getInstance(
@@ -134,46 +170,6 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
 
 
 
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                int id = menuItem.getItemId();
-
-                if (id == R.id.navigation_menu_notes)
-                {
-                    toolbar.setTitle(getString(R.string.navigation_view_notes));
-                    toolbar.getMenu().clear();
-                    toolbar.inflateMenu(R.menu.notes_toolbar);
-                    addNoteButton.show();
-                    presenter.loadNotes();
-                }
-                if (id == R.id.navigation_menu_archive)
-                {
-                    toolbar.setTitle(getString(R.string.navigation_view_archive));
-                    //Сменить меню
-                    toolbar.getMenu().clear();
-                    toolbar.inflateMenu(R.menu.notes_toolbar_archive);
-                    addNoteButton.hide();
-                    presenter.loadArchiveNotes();
-                    appBarLayout.setExpanded(true);
-                }
-                if (id == R.id.navigation_menu_settings)
-                {
-                    Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
-                    startActivity(intent);
-                }
-                if (id == R.id.navigation_menu_about)
-                {
-                    Intent intent = new Intent(getApplicationContext(), AboutActivity.class);
-                    startActivity(intent);
-                }
-
-                DrawerLayout drawer = findViewById(R.id.activity_notes_drawer);
-                drawer.closeDrawer(GravityCompat.START);
-
-                return true;
-            }
-        });
 
 
 
@@ -278,12 +274,154 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
         });
 
 
-        //Отключить переиспользование элементов
-        //При большом количестве элементов
-        //mainNoteView.getRecycledViewPool().setMaxRecycledViews(0,0);
+        buttonNotes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toolbar.setTitle(getString(R.string.navigation_view_notes));
+                toolbar.getMenu().clear();
+                toolbar.inflateMenu(R.menu.notes_toolbar);
+                addNoteButton.show();
+                presenter.loadNotes();
+                //Выделить кнопку
+                navSelectNotes();
+
+                if(navHashtagsList != null) {
+                    for (int i = 0; i < navHashtagsList.size(); i++) {
+                        NavigationHashtag item = navHashtagsList.get(i);
+                        if(item.isSelected()){
+                            item.setSelected(false);
+                            hashtagsAdapter.notifyItemChanged(i);
+                        }
+                    }
+                }
+
+                drawerLayout.closeDrawer(GravityCompat.START);
+                state = NotesState.NOTES;
+            }
+        });
+        buttonDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toolbar.setTitle(getString(R.string.navigation_view_archive));
+                //Сменить меню
+                toolbar.getMenu().clear();
+                toolbar.inflateMenu(R.menu.notes_toolbar_archive);
+                addNoteButton.hide();
+                presenter.loadArchiveNotes();
+                appBarLayout.setExpanded(true);
+                //Выделить кнопку
+                navSelectDelete();
+
+                if(navHashtagsList != null) {
+                    for (int i = 0; i < navHashtagsList.size(); i++) {
+                        NavigationHashtag item = navHashtagsList.get(i);
+                        if(item.isSelected()){
+                            item.setSelected(false);
+                            hashtagsAdapter.notifyItemChanged(i);
+                        }
+                    }
+                }
+
+                drawerLayout.closeDrawer(GravityCompat.START);
+                state = NotesState.DELETE;
+            }
+        });
+        buttonSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+                startActivity(intent);
+                drawerLayout.closeDrawer(GravityCompat.START);
+            }
+        });
+        buttonAbout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), AboutActivity.class);
+                startActivity(intent);
+                drawerLayout.closeDrawer(GravityCompat.START);
+            }
+        });
+        buttonAddHashtag.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //todo Станица редактирования
+                Intent intent = new Intent(getApplicationContext(), AboutActivity.class);
+                startActivity(intent);
+                drawerLayout.closeDrawer(GravityCompat.START);
+            }
+        });
+
+
+        /* Хэштеги */
+        hashtagsAdapter = new NotesHashtagsAdapter(hashtagListener);
+        navHashtagsRecyclerView.setAdapter(hashtagsAdapter);
+        navHashtagsRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
+
+        //
+
+
+        //
+
+
+
+
+
 
     }
 
+    //Клик по хэтегу в меню навигации
+    private final NotesHashtagListener hashtagListener = new NotesHashtagListener() {
+        @Override
+        public void onItemClick(int position) {
+            //Снять выделение с статичных кнопок
+            navSelectClear();
+            //Выделить этот элемент и снять с других
+            //обновить данные на этот хештег
+
+            if(navHashtagsList != null) {
+                for (int i = 0; i < navHashtagsList.size(); i++) {
+                    NavigationHashtag item = navHashtagsList.get(i);
+                    if(item.isSelected()){
+                        item.setSelected(false);
+                        hashtagsAdapter.notifyItemChanged(i);
+                    }
+                }
+
+                NavigationHashtag item = navHashtagsList.get(position);
+
+                item.setSelected(true);
+                hashtagsAdapter.notifyItemChanged(position);
+
+                presenter.loadNotesWithHashtag(item.getId());
+                toolbar.setTitle(item.getName());
+
+                //Выбрать элементы
+            }
+
+
+            //Статус: выбран хэштег
+            state = NotesState.HASHTAGS;
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }
+    };
+
+
+    public void navSelectClear() {
+        buttonNotes.setSelected(false);
+        buttonDelete.setSelected(false);
+    }
+    public void navSelectNotes() {
+        buttonNotes.setSelected(true);
+        buttonDelete.setSelected(false);
+    }
+    public void navSelectDelete() {
+        buttonNotes.setSelected(false);
+        buttonDelete.setSelected(true);
+    }
+    private void navClearHashtags() {
+
+    }
 
 
 
@@ -448,22 +586,31 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(Objects.requireNonNull(getApplicationContext()));
         String temp = settings.getString("columns_list", "2");
 
-        int columns = Integer.valueOf(temp);
+        int columns = 2;
+        if(temp != null){
+            columns = Integer.parseInt(temp);
+        }
         mainNoteView.setLayoutManager(new StaggeredGridLayoutManager(columns, StaggeredGridLayoutManager.VERTICAL));
 
+        //Загрузить хэштеги в меню навигации
+        presenter.loadHashtags();
 
-        MenuItem item = navigationView.getCheckedItem();
 
-        if(Objects.requireNonNull(item).getItemId() == R.id.navigation_menu_notes)
-        {
-            presenter.loadNotes();
-            toolbar.setTitle(getString(R.string.navigation_view_notes));
+        switch (state) {
+            case NOTES:
+                presenter.loadNotes();
+                toolbar.setTitle(getString(R.string.navigation_view_notes));
+                break;
+            case DELETE:
+                presenter.loadArchiveNotes();
+                toolbar.setTitle(getString(R.string.navigation_view_archive));
+                break;
+            case HASHTAGS:
+                toolbar.setTitle("хештег");
+                break;
         }
-        if(item.getItemId() == R.id.navigation_menu_archive)
-        {
-            presenter.loadArchiveNotes();
-            toolbar.setTitle(getString(R.string.navigation_view_archive));
-        }
+
+
     }
 
 
@@ -482,15 +629,28 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
         startActivity(intent);
     }
 
+    @Override
+    public void applyHashtags(List<NavigationHashtag> hashtags) {
+        if(hashtags.size() > 0) {
+            nvHasHashtags.setVisibility(View.VISIBLE);
+            nvNoHashtags.setVisibility(View.GONE);
+        } else {
+            nvHasHashtags.setVisibility(View.GONE);
+            nvNoHashtags.setVisibility(View.VISIBLE);
+        }
+        navHashtagsList = hashtags;
+        hashtagsAdapter.setList(hashtags);
+    }
 
 
     public interface NoteListener {
         void onItemClick(Note target);
     }
 
-    public class SpacesItemDecoration extends RecyclerView.ItemDecoration
+    //Отступы для элементов RecyclerView
+    public static class SpacesItemDecoration extends RecyclerView.ItemDecoration
     {
-        private int space;
+        private final int space;
         SpacesItemDecoration(int space) {
             this.space = space;
         }

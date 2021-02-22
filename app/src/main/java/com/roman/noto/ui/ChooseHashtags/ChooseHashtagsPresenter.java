@@ -27,10 +27,6 @@ public class ChooseHashtagsPresenter implements ChooseHashtagsContract.Presenter
     //Получить список хештегов и отметить выделенные
     @Override
     public void selectHashtagsShow(final Note note) {
-
-        Log.d(TAG, "selectHashtagsShow, size: " + note.getHashtags().size());
-
-
         repository.getHashtags(new GetHashtagsCallback() {
             @Override
             public void onDataNotAvailable() { }
@@ -51,7 +47,6 @@ public class ChooseHashtagsPresenter implements ChooseHashtagsContract.Presenter
                 view.hashtagShow(hashtagList);
             }
         });
-
 
 
     }

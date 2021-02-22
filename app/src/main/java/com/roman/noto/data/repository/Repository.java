@@ -6,6 +6,7 @@ import com.roman.noto.data.callback.DeleteNoteCallback;
 import com.roman.noto.data.callback.GetFirstPositionCallback;
 import com.roman.noto.data.callback.GetHashtagsCallback;
 import com.roman.noto.data.callback.GetNoteCallback;
+import com.roman.noto.data.callback.GetNotesWithHashtagCallback;
 import com.roman.noto.data.callback.LoadNotesCallback;
 
 import java.util.List;
@@ -36,6 +37,8 @@ public interface Repository {
     void getNotes(final LoadNotesCallback callback);
     //Получить удаленные заметки
     void getArchivedNotes(final LoadNotesCallback callback);
+    //Получить заметки содержащие выбранный хештег
+    void getNotesWithHashtag(int id, final GetNotesWithHashtagCallback callback);
     //Удалить архивные заметки
     void clearArchiveNotes(final DeleteArchiveNotesCallback callback);
 

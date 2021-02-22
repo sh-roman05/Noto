@@ -16,6 +16,7 @@ import com.roman.noto.data.callback.DeleteNoteCallback;
 import com.roman.noto.data.callback.GetFirstPositionCallback;
 import com.roman.noto.data.callback.GetHashtagsCallback;
 import com.roman.noto.data.callback.GetNoteCallback;
+import com.roman.noto.data.callback.GetNotesWithHashtagCallback;
 import com.roman.noto.data.callback.LoadNotesCallback;
 import com.roman.noto.util.AppExecutors;
 
@@ -228,6 +229,11 @@ public class RoomRepository implements Repository {
     @Override
     public void getArchivedNotes(final LoadNotesCallback callback) {
         getAllNotes(callback);
+    }
+
+    @Override
+    public void getNotesWithHashtag(int id, GetNotesWithHashtagCallback callback) {
+        //Не используется
     }
 
     private void getAllNotes(final LoadNotesCallback callback)

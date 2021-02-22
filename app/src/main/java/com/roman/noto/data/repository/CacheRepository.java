@@ -10,6 +10,7 @@ import com.roman.noto.data.callback.DeleteNoteCallback;
 import com.roman.noto.data.callback.GetFirstPositionCallback;
 import com.roman.noto.data.callback.GetHashtagsCallback;
 import com.roman.noto.data.callback.GetNoteCallback;
+import com.roman.noto.data.callback.GetNotesWithHashtagCallback;
 import com.roman.noto.data.callback.LoadNotesCallback;
 
 import java.util.ArrayList;
@@ -335,6 +336,66 @@ public class CacheRepository implements Repository
     @Override
     public void getArchivedNotes(final LoadNotesCallback callback) {
         getAllNotes(callback, true);
+    }
+
+
+    //Получить заметки содержащие выбранный хештег
+    @Override
+    public void getNotesWithHashtag(final int id, final GetNotesWithHashtagCallback callback) {
+        //Если нет кеша, то запрашиваем у Room данные
+        if (cachedNotes == null) {
+            repository.getNotes(new LoadNotesCallback() {
+                @Override
+                public void onDataNotAvailable() {
+                    callback.onDataNotAvailable();
+                }
+                @Override
+                public void onNotesLoaded(List<Note> notes) {
+
+                    if(!notes.isEmpty() && position == null)
+                        position = notes.get(0).getPosition();
+
+                    refreshCache(notes);
+                    ArrayList<Note> temp = new ArrayList<>();
+
+                    Iterator<Map.Entry<String, Note>> it = cachedNotes.entrySet().iterator();
+                    while (it.hasNext()) {
+                        Map.Entry<String, Note> entry = it.next();
+
+                        Note item = entry.getValue();
+                        for (int hashId: item.getHashtags()){
+                            if(hashId == id){
+                                temp.add(item);
+                                break;
+                            }
+                        }
+
+                    }
+                    //Готово
+                    callback.onNotesLoaded(temp);
+                }
+            });
+        }else
+        {
+            ArrayList<Note> temp = new ArrayList<>();
+            //Работа этого кода предполагает наличие кэша
+            Iterator<Map.Entry<String, Note>> it = cachedNotes.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String, Note> entry = it.next();
+
+                Note item = entry.getValue();
+                for (int hashId: item.getHashtags()){
+                    if(hashId == id){
+                        temp.add(item);
+                        break;
+                    }
+                }
+            }
+            //Отсортировать по позиции
+            Collections.sort(temp, new SortByPosition());
+            //Готово
+            callback.onNotesLoaded(temp);
+        }
     }
 
 }

@@ -2,12 +2,16 @@ package com.roman.noto.ui.Notes;
 
 import android.util.Log;
 
+import com.roman.noto.data.Hashtag;
 import com.roman.noto.data.callback.DeleteArchiveNotesCallback;
 import com.roman.noto.data.callback.GetHashtagsCallback;
 import com.roman.noto.data.callback.GetHashtagsForAdapterCallback;
+import com.roman.noto.data.callback.GetNotesWithHashtagCallback;
 import com.roman.noto.data.callback.LoadNotesCallback;
 import com.roman.noto.data.Note;
+import com.roman.noto.data.repository.NavigationHashtag;
 import com.roman.noto.data.repository.Repository;
+import com.roman.noto.ui.ChooseHashtags.ChooseHashtag;
 import com.roman.noto.util.NoteColor;
 
 import java.util.ArrayList;
@@ -142,6 +146,46 @@ public class NotesPresenter implements NotesContract.Presenter
                 callback.onHashtagsLoaded(object);
             }
         });
+    }
+
+    @Override
+    public void loadHashtags() {
+        repository.getHashtags(new GetHashtagsCallback() {
+            @Override
+            public void onDataNotAvailable() { }
+
+            @Override
+            public void onHashtagsLoaded(Map<Integer, String> object) {
+                List<NavigationHashtag> hashtagList = hashtagsMapToList(object);
+                view.applyHashtags(hashtagList);
+            }
+        });
+    }
+
+    @Override
+    public void loadNotesWithHashtag(int hashtagId) {
+        //
+        repository.getNotesWithHashtag(hashtagId, new GetNotesWithHashtagCallback() {
+            @Override
+            public void onDataNotAvailable() {
+                //
+            }
+
+            @Override
+            public void onNotesLoaded(List<Note> notes) {
+                view.showNotes(notes);
+            }
+        });
+    }
+
+    private List<NavigationHashtag> hashtagsMapToList(Map<Integer, String> hashtags) {
+        List<NavigationHashtag> temp = new ArrayList<>();
+        //Получаем список всех id
+        List<Integer> list = new ArrayList<Integer>(hashtags.keySet());
+        for (Integer id: list) {
+            temp.add(new NavigationHashtag(id, hashtags.get(id)));
+        }
+        return temp;
     }
 
 

@@ -37,4 +37,8 @@
     <string name="activity_note_detail_action_hashtag">Hashtag</string>
     <string name="activity_choose_hashtag_empty">You don\'t have hashtags</string>
     <string name="activity_notes_hashtag_more">more</string>
+    <string name="navigation_view_hashtags">Hashtags</string>
+    <string name="navigation_view_add_hashtag">Add hashtag</string>
+    <string name="navigation_view_hashtags_title">Hashtags</string>
+    <string name="navigation_view_hashtags_change">Change</string>
 </resources>

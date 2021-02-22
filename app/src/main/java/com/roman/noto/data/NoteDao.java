@@ -57,7 +57,6 @@ public interface NoteDao {
     @Insert
     void insertList(List<Note> notes);
 
-
     /* Хештеги */
     @Query("SELECT * FROM hashtags")
     List<Hashtag> getHashtags();

@@ -71,7 +71,7 @@
             app:srcCompat="@drawable/ic_add"
             android:clickable="true"
             android:focusable="true"
-            />
+            android:contentDescription="TODO" />
 
 
         <LinearLayout
@@ -102,9 +102,172 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        app:menu="@menu/navigation_view"
-        app:headerLayout="@layout/navigation_header"
-        android:fitsSystemWindows="true" />
+        >
+
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="#64B5F6"/>
+
+                <!-- Notes -->
+                <FrameLayout
+                    android:id="@+id/activity_notes_nv_notes"
+                    style="@style/NvButton">
+                    <LinearLayout
+                        style="@style/NvButtonContainer"
+                        tools:ignore="UseCompoundDrawables">
+                        <ImageView
+                            style="@style/NvButtonIcon"
+                            android:src="@drawable/ic_event_note"
+                            android:contentDescription="@string/navigation_view_notes"
+                            app:tint="@color/nv_button_text" />
+                        <TextView
+                            style="@style/NvButtonText"
+                            android:text="@string/navigation_view_notes"/>
+                    </LinearLayout>
+                </FrameLayout>
+
+                <View
+                    android:id="@+id/activity_notes_nv_no_hashtags"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#1A000000"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp" />
+
+                <FrameLayout
+                    android:id="@+id/activity_notes_nv_has_hashtags"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="10dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAllCaps="true"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="15dp"
+                        android:textSize="12sp"
+                        android:text="@string/navigation_view_hashtags_title"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:textAllCaps="true"
+                        android:textSize="12sp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:paddingTop="3dp"
+                        android:paddingBottom="3dp"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:layout_marginEnd="15dp"
+                        android:layout_gravity="end"
+                        android:text="@string/navigation_view_hashtags_change"/>
+                </FrameLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/activity_notes_hashtags_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="none"/>
+
+
+                <!-- add hashtag -->
+                <FrameLayout
+                    android:id="@+id/activity_notes_nv_add_hashtag"
+                    style="@style/NvButton">
+                    <LinearLayout
+                        style="@style/NvButtonContainer"
+                        tools:ignore="UseCompoundDrawables">
+                        <ImageView
+                            style="@style/NvButtonIcon"
+                            android:src="@drawable/ic_add"
+                            android:contentDescription="@string/navigation_view_add_hashtag"
+                            app:tint="@color/nv_button_text" />
+                        <TextView
+                            style="@style/NvButtonText"
+                            android:text="@string/navigation_view_add_hashtag"/>
+                    </LinearLayout>
+                </FrameLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#1A000000"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp" />
+
+                <!-- Recycle bin -->
+                <FrameLayout
+                    android:id="@+id/activity_notes_nv_delete"
+                    style="@style/NvButton">
+                    <LinearLayout
+                        style="@style/NvButtonContainer"
+                        tools:ignore="UseCompoundDrawables">
+                        <ImageView
+                            style="@style/NvButtonIcon"
+                            android:src="@drawable/ic_delete"
+                            android:contentDescription="@string/navigation_view_archive"
+                            app:tint="@color/nv_button_text" />
+                        <TextView
+                            style="@style/NvButtonText"
+                            android:text="@string/navigation_view_archive"/>
+                    </LinearLayout>
+                </FrameLayout>
+                <!-- Settings -->
+                <FrameLayout
+                    android:id="@+id/activity_notes_nv_settings"
+                    style="@style/NvButton">
+                    <LinearLayout
+                        style="@style/NvButtonContainer"
+                        tools:ignore="UseCompoundDrawables">
+                        <ImageView
+                            style="@style/NvButtonIcon"
+                            android:src="@drawable/ic_settings"
+                            android:contentDescription="@string/navigation_view_settings"
+                            app:tint="@color/nv_button_text" />
+                        <TextView
+                            style="@style/NvButtonText"
+                            android:text="@string/navigation_view_settings"/>
+                    </LinearLayout>
+                </FrameLayout>
+                <!-- About -->
+                <FrameLayout
+                    android:id="@+id/activity_notes_nv_about"
+                    style="@style/NvButton">
+                    <LinearLayout
+                        style="@style/NvButtonContainer"
+                        tools:ignore="UseCompoundDrawables">
+                        <ImageView
+                            style="@style/NvButtonIcon"
+                            android:src="@drawable/ic_error_outline"
+                            android:contentDescription="@string/navigation_view_about"
+                            app:tint="@color/nv_button_text" />
+                        <TextView
+                            style="@style/NvButtonText"
+                            android:text="@string/navigation_view_about"/>
+                    </LinearLayout>
+                </FrameLayout>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+    </com.google.android.material.navigation.NavigationView>
 
 
 

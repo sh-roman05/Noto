@@ -1,7 +1,9 @@
 package com.roman.noto.ui.Notes;
 
+import com.roman.noto.data.Hashtag;
 import com.roman.noto.data.Note;
 import com.roman.noto.data.callback.GetHashtagsForAdapterCallback;
+import com.roman.noto.data.repository.NavigationHashtag;
 import com.roman.noto.util.NoteColor;
 
 import java.util.List;
@@ -11,8 +13,7 @@ public interface NotesContract {
     interface View {
         void showNotes(List<Note> notes);
         void editNote(Note target);
-
-
+        void applyHashtags(List<NavigationHashtag> hashtags);
     }
 
     interface Presenter {
@@ -37,5 +38,11 @@ public interface NotesContract {
 
         //Получить хештеги для адаптера
         void getHashtagsForAdapter(final GetHashtagsForAdapterCallback callback);
+        //Получить хештеги для меню навигации
+        void loadHashtags();
+
+        //Загрузить заметки включающие хештег
+        void loadNotesWithHashtag(int hashtagId);
+
     }
 }

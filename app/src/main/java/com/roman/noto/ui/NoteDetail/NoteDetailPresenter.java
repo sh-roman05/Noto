@@ -16,8 +16,8 @@ public class NoteDetailPresenter implements NoteDetailContract.Presenter {
 
     static final String TAG = "NoteDetailPresenter";
 
-    private Repository repository;
-    private NoteDetailContract.View view;
+    private final Repository repository;
+    private final NoteDetailContract.View view;
 
 
     public NoteDetailPresenter(NoteDetailContract.View view, Repository repository) {

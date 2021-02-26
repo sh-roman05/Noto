@@ -41,4 +41,8 @@
     <string name="navigation_view_add_hashtag">Add hashtag</string>
     <string name="navigation_view_hashtags_title">Hashtags</string>
     <string name="navigation_view_hashtags_change">Change</string>
+    <string name="activity_settings_alert_delete_message">Are you sure you want to delete the entire database?</string>
+    <string name="activity_settings_alert_delete_title">Delete database</string>
+    <string name="activity_settings_alert_delete_yes">Delete</string>
+    <string name="activity_settings_alert_delete_no">Cancel</string>
 </resources>

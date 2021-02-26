@@ -361,14 +361,9 @@ public class CacheRepository implements Repository
                     Iterator<Map.Entry<String, Note>> it = cachedNotes.entrySet().iterator();
                     while (it.hasNext()) {
                         Map.Entry<String, Note> entry = it.next();
-
                         Note item = entry.getValue();
-                        for (int hashId: item.getHashtags()){
-                            if(hashId == id){
-                                temp.add(item);
-                                break;
-                            }
-                        }
+                        if (item.getHashtags().contains(id))
+                            temp.add(item);
 
                     }
                     //Готово
@@ -382,14 +377,9 @@ public class CacheRepository implements Repository
             Iterator<Map.Entry<String, Note>> it = cachedNotes.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry<String, Note> entry = it.next();
-
                 Note item = entry.getValue();
-                for (int hashId: item.getHashtags()){
-                    if(hashId == id){
-                        temp.add(item);
-                        break;
-                    }
-                }
+                if (item.getHashtags().contains(id))
+                    temp.add(item);
             }
             //Отсортировать по позиции
             Collections.sort(temp, new SortByPosition());

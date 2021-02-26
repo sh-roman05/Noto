@@ -8,6 +8,7 @@ import com.roman.noto.data.repository.Repository;
 import com.roman.noto.ui.About.AboutContract;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -15,8 +16,8 @@ public class ChooseHashtagsPresenter implements ChooseHashtagsContract.Presenter
 
     static final String TAG = "ChooseHashtagsPresenter";
 
-    private Repository repository;
-    private ChooseHashtagsContract.View view;
+    private final Repository repository;
+    private final ChooseHashtagsContract.View view;
 
     ChooseHashtagsPresenter(ChooseHashtagsContract.View view, Repository repository) {
         this.view = view;
@@ -54,7 +55,7 @@ public class ChooseHashtagsPresenter implements ChooseHashtagsContract.Presenter
     @Override
     public void saveSelectHashtags(Note note, List<ChooseHashtag> hashtagList) {
 
-        ArrayList<Integer> hashList = new ArrayList<>();
+        HashSet<Integer> hashList = new HashSet<>();
         for (ChooseHashtag tag: hashtagList){
             if(tag.isSelect()){
                 hashList.add(tag.getId());

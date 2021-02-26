@@ -13,6 +13,11 @@ import com.google.common.base.Strings;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity(tableName = "notes")
@@ -45,30 +50,30 @@ public class Note implements Parcelable {
     private Date lastChange;
 
     @ColumnInfo(name = "hashtag")
-    private ArrayList<Integer> hashtags = new ArrayList<Integer>();
+    private HashSet<Integer> hashtags = new HashSet<>();
 
 
     //Создание чистой заметки
     public Note() {
-        this(UUID.randomUUID().toString(), "", "", false, 0, false, 0, new Date(), new ArrayList<Integer>());
+        this(UUID.randomUUID().toString(), "", "", false, 0, false, 0, new Date(), new HashSet<Integer>());
     }
 
     //Полное клонирование заметки
     @Ignore
     public Note(Note note)
     {
-        this(note.getId(), note.getTitle(), note.getText(), note.isArchive(), note.getColor(), note.isFixed(), note.getPosition(), (Date) note.getLastChange().clone(), (ArrayList<Integer>) note.getHashtags().clone());
+        this(note.getId(), note.getTitle(), note.getText(), note.isArchive(), note.getColor(), note.isFixed(), note.getPosition(), (Date) note.getLastChange().clone(), (HashSet<Integer>) note.getHashtags().clone());
     }
 
     //Полное клонирование заметки с новым id
     @Ignore
     public Note(Note note, UUID uuid)
     {
-        this(uuid.toString(), note.getTitle(), note.getText(), note.isArchive(), note.getColor(), note.isFixed(), note.getPosition(), (Date) note.getLastChange().clone(), (ArrayList<Integer>) note.getHashtags().clone());
+        this(uuid.toString(), note.getTitle(), note.getText(), note.isArchive(), note.getColor(), note.isFixed(), note.getPosition(), (Date) note.getLastChange().clone(), (HashSet<Integer>) note.getHashtags().clone());
     }
 
     @Ignore
-    public Note(@NonNull String id, String title, String text, boolean archive, int color, boolean fixed, int position, Date lastChange, ArrayList<Integer> hashtags) {
+    public Note(@NonNull String id, String title, String text, boolean archive, int color, boolean fixed, int position, Date lastChange, HashSet<Integer> hashtags) {
         this.id = id;
         this.title = title;
         this.text = text;
@@ -80,7 +85,6 @@ public class Note implements Parcelable {
         this.hashtags = hashtags;
     }
 
-    //todo: обновить при добавлении новых полей
     @Ignore
     protected Note(Parcel in) {
         id = in.readString();
@@ -92,16 +96,18 @@ public class Note implements Parcelable {
         position = in.readInt();
         long tmpLastChange = in.readLong();
         lastChange = tmpLastChange != -1 ? new Date(tmpLastChange) : null;
+        //Проверить, существует ли объект
         if (in.readByte() == 0x01) {
-            hashtags = new ArrayList<Integer>();
-            in.readList(hashtags, Integer.class.getClassLoader());
+            int size = in.readInt();
+            for(int i = 0; i < size; i++){
+                Integer key = in.readInt();
+                hashtags.add(key);
+            }
         } else {
             hashtags = null;
         }
     }
 
-    //todo: обновить при добавлении новых полей
-    //todo: сравнение всех хештегов
     //Эквивалентны ли по содержанию
     public boolean isEqual(Note note) {
         boolean temp = true;
@@ -110,15 +116,15 @@ public class Note implements Parcelable {
         if (archive != note.archive) temp = false;
         if (color != note.color) temp = false;
         if (position != note.position) temp = false;
-        if (hashtags.size() != note.hashtags.size()) temp = false;
+        if (!hashtags.equals(note.hashtags)) temp = false;
         return temp;
     }
 
-
-    //todo: обновить при добавлении новых полей
     public boolean isEmpty() {
         return (
-                Strings.isNullOrEmpty(title) && Strings.isNullOrEmpty(text)
+                Strings.isNullOrEmpty(title) &&
+                        Strings.isNullOrEmpty(text) &&
+                        hashtags.isEmpty()
         );
     }
 
@@ -186,15 +192,14 @@ public class Note implements Parcelable {
         this.position = position;
     }
 
-    public ArrayList<Integer> getHashtags() {
+    public HashSet<Integer> getHashtags() {
         return hashtags;
     }
 
-    public void setHashtags(ArrayList<Integer> hashtags) {
+    public void setHashtags(HashSet<Integer> hashtags) {
         this.hashtags = hashtags;
     }
 
-    //todo: обновить при добавлении новых полей
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(id);
@@ -205,11 +210,16 @@ public class Note implements Parcelable {
         dest.writeByte((byte) (fixed ? 0x01 : 0x00));
         dest.writeInt(position);
         dest.writeLong(lastChange != null ? lastChange.getTime() : -1L);
+        //Существует ли объект. Записать байт в поле.
         if (hashtags == null) {
             dest.writeByte((byte) (0x00));
         } else {
             dest.writeByte((byte) (0x01));
-            dest.writeList(hashtags);
+            dest.writeInt(hashtags.size());
+            Iterator<Integer> it = hashtags.iterator();
+            while (it.hasNext()){
+                dest.writeInt(it.next());
+            }
         }
     }
 

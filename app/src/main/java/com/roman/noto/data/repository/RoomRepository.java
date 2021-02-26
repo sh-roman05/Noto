@@ -32,7 +32,7 @@ public class RoomRepository implements Repository {
 
     static final String TAG = "RoomRepository";
     private static RoomRepository INSTANCE = null;
-    private String filename = "database16.db";
+    private String filename = "database17.db";
     private NoteDao dao;
     private AppDatabase db;
     private AppExecutors appExecutors;
@@ -274,13 +274,7 @@ public class RoomRepository implements Repository {
 
             Note temp = new Note();
 
-            ArrayList<Integer> tempi = new ArrayList<>();
-            int cnt2 = Math.abs(rand.nextInt() % 5);
-            for (int j = 0; j < cnt2; j++) {
-                tempi.add(j);
-            }
 
-            temp.setHashtags(tempi);
 
             temp.setColor(color);
             temp.setTitle(title);

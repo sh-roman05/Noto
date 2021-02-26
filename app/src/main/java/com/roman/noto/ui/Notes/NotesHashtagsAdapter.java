@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.roman.noto.R;
-import com.roman.noto.data.Hashtag;
 import com.roman.noto.data.Note;
 import com.roman.noto.data.repository.NavigationHashtag;
 

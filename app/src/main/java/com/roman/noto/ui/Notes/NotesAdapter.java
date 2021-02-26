@@ -28,6 +28,7 @@ import com.roman.noto.util.NoteColor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -227,7 +228,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
             card.setCardBackgroundColor(Color.parseColor(NoteColor.getInstance().getItemColor(item.getColor()).getColorBackground()));
 
             //Получаем список id прикрепленных хештегов
-            ArrayList<Integer> hashId = item.getHashtags();
+            HashSet<Integer> hashId = item.getHashtags();
 
             ArrayList<String> hashName = new ArrayList<>();
             Iterator iter =  hashId.iterator();
@@ -236,9 +237,6 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
                 String name = hashtags.get((Integer) iter.next());
                 if(name != null) hashName.add(name);
             }
-
-            //todo если мы во вкладке по определенному тегу, то в списке показать его первым
-
 
 
             //hashName - тут строки которые можно показать
@@ -265,7 +263,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
             } else if(hashName.size() > 3) {
                 chip1.setText(hashName.get(0));
                 chip2.setText(hashName.get(1));
-                chip3.setText("+ " + moreString + " " + (hashName.size() - 2)); //todo тут нет английского варианта
+                chip3.setText("+ " + moreString + " " + (hashName.size() - 2));
                 chip1.setVisibility(View.VISIBLE);
                 chip2.setVisibility(View.VISIBLE);
                 chip3.setVisibility(View.VISIBLE);
@@ -280,8 +278,6 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
         }
     }
 
-
-    //Добавил static
 
     //ItemKeyProvider
     public static class NoteItemKeyProvider extends ItemKeyProvider<Note> {

@@ -44,7 +44,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.common.collect.Lists;
 import com.roman.noto.RecyclerViewEmptySupport;
-import com.roman.noto.data.Hashtag;
 import com.roman.noto.data.repository.NavigationHashtag;
 import com.roman.noto.ui.About.AboutActivity;
 import com.roman.noto.data.Note;
@@ -66,11 +65,6 @@ import java.util.Objects;
 
 public class NotesActivity extends AppCompatActivity implements NotesContract.View {
 
-    /*
-     * 1) Проблема с соответствием с данными в RecyclerView решилась через getItemId и setHasStableIds(true),
-     *    но анимация стала рваной.
-     * */
-
     static final String TAG = "NotesActivity";
 
     public NotesContract.Presenter presenter;
@@ -78,13 +72,15 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
     FloatingActionButton addNoteButton;
 
     //Toolbar
-    Toolbar toolbar;
-    AppBarLayout appBarLayout;
+    private Toolbar toolbar;
+    private AppBarLayout appBarLayout;
 
     //Выделение заметок
     private SelectionTracker<Note> mSelectionTracker;
     //Замена Toolbar в режиме выделения заметок
     private ActionMode actionMode;
+
+    View emptyView;
 
     //Адаптер
     NotesAdapter adapter;
@@ -102,6 +98,8 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
     RecyclerView navHashtagsRecyclerView;
     NotesHashtagsAdapter hashtagsAdapter;
     List<NavigationHashtag> navHashtagsList;
+    NavigationHashtag selectedHashtag;
+
 
 
     @Override
@@ -123,6 +121,7 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
         mainNoteView = findViewById(R.id.activity_notes_list);
         addNoteButton = findViewById(R.id.activity_notes_add_button);
         appBarLayout = findViewById(R.id.activity_notes_collapsing_appbar);
+        emptyView = findViewById(R.id.activity_notes_empty_view);
         //NavigationView
         buttonNotes = findViewById(R.id.activity_notes_nv_notes);
         buttonDelete = findViewById(R.id.activity_notes_nv_delete);
@@ -165,15 +164,8 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
 
 
 
-        View emptyView = findViewById(R.id.activity_notes_empty_view);
+
         mainNoteView.setEmptyView(emptyView);
-
-
-
-
-
-
-
 
 
         ItemTouchHelper itemTouchHelper;
@@ -249,29 +241,23 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
         addNoteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                presenter.addNote();
+                switch (state){
+                    case HASHTAGS:
+                        presenter.addEmptyNoteWithHashtag(selectedHashtag);
+                        break;
+                    case NOTES:
+                        presenter.addEmptyNote();
+                        break;
+                    default:
+                        break;
+                }
             }
         });
 
 
 
         //Callback для отслеживания событий DrawerLayout
-        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
-            @Override
-            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) { }
-
-            @Override
-            public void onDrawerOpened(@NonNull View drawerView) { }
-
-            @Override
-            public void onDrawerClosed(@NonNull View drawerView) { }
-
-            @Override
-            public void onDrawerStateChanged(int newState) {
-                if(actionMode != null)
-                    actionMode.finish();
-            }
-        });
+        drawerLayout.addDrawerListener(drawerLayoutListener);
 
 
         buttonNotes.setOnClickListener(new View.OnClickListener() {
@@ -370,6 +356,23 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
 
     }
 
+    private final DrawerLayout.DrawerListener drawerLayoutListener = new DrawerLayout.DrawerListener() {
+        @Override
+        public void onDrawerSlide(@NonNull View drawerView, float slideOffset) { }
+
+        @Override
+        public void onDrawerOpened(@NonNull View drawerView) { }
+
+        @Override
+        public void onDrawerClosed(@NonNull View drawerView) { }
+
+        @Override
+        public void onDrawerStateChanged(int newState) {
+            if(actionMode != null)
+                actionMode.finish();
+        }
+    };
+
     //Клик по хэтегу в меню навигации
     private final NotesHashtagListener hashtagListener = new NotesHashtagListener() {
         @Override
@@ -396,7 +399,12 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
                 presenter.loadNotesWithHashtag(item.getId());
                 toolbar.setTitle(item.getName());
 
-                //Выбрать элементы
+                addNoteButton.show();
+
+
+                //Запомнить выбранный хештег
+                selectedHashtag = item;
+
             }
 
 
@@ -419,9 +427,7 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
         buttonNotes.setSelected(false);
         buttonDelete.setSelected(true);
     }
-    private void navClearHashtags() {
 
-    }
 
 
 
@@ -429,13 +435,10 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
     private ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            MenuItem item = navigationView.getCheckedItem();
-            if(item != null) {
-                if(item.getItemId() == R.id.navigation_menu_notes)
-                    mode.getMenuInflater().inflate(R.menu.notes_toolbar_action_mode, menu);
-                if(item.getItemId() == R.id.navigation_menu_archive)
-                    mode.getMenuInflater().inflate(R.menu.notes_toolbar_action_mode_archive, menu);
-            }
+            if(state == NotesState.NOTES || state == NotesState.HASHTAGS)
+                mode.getMenuInflater().inflate(R.menu.notes_toolbar_action_mode, menu);
+            if(state == NotesState.DELETE)
+                mode.getMenuInflater().inflate(R.menu.notes_toolbar_action_mode_archive, menu);
             return true;
         }
 
@@ -606,7 +609,19 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
                 toolbar.setTitle(getString(R.string.navigation_view_archive));
                 break;
             case HASHTAGS:
-                toolbar.setTitle("хештег");
+                if(selectedHashtag != null) {
+                    //загрузить и выделить в панели
+                    toolbar.setTitle(selectedHashtag.getName());
+                    presenter.loadNotesWithHashtag(selectedHashtag.getId());
+                    for (int i = 0; i < navHashtagsList.size(); i++) {
+                        NavigationHashtag item = navHashtagsList.get(i);
+                        if(item.getId().equals(selectedHashtag.getId())){
+                            item.setSelected(true);
+                            adapter.notifyItemChanged(i);
+                        }
+
+                    }
+                }
                 break;
         }
 

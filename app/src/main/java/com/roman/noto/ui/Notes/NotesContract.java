@@ -1,6 +1,5 @@
 package com.roman.noto.ui.Notes;
 
-import com.roman.noto.data.Hashtag;
 import com.roman.noto.data.Note;
 import com.roman.noto.data.callback.GetHashtagsForAdapterCallback;
 import com.roman.noto.data.repository.NavigationHashtag;
@@ -17,9 +16,21 @@ public interface NotesContract {
     }
 
     interface Presenter {
+        //Добавить пустую заметку с хештегом
+        void addEmptyNoteWithHashtag(NavigationHashtag selectedHashtag);
+        //Добавить пустую заметку
+        void addEmptyNote();
+
+        //Загрузить заметки включающие хештег
+        void loadNotesWithHashtag(int hashtagId);
+
+
+
+
+        /************/
         void loadNotes();
         void loadArchiveNotes();
-        void addNote();
+
         void swapNotes(Note fromPosition, Note toPosition);
         void clickNote(Note target);
         void archiveNote(Note note);
@@ -41,8 +52,8 @@ public interface NotesContract {
         //Получить хештеги для меню навигации
         void loadHashtags();
 
-        //Загрузить заметки включающие хештег
-        void loadNotesWithHashtag(int hashtagId);
+
+
 
     }
 }

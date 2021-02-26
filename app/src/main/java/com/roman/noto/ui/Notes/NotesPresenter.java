@@ -2,7 +2,7 @@ package com.roman.noto.ui.Notes;
 
 import android.util.Log;
 
-import com.roman.noto.data.Hashtag;
+
 import com.roman.noto.data.callback.DeleteArchiveNotesCallback;
 import com.roman.noto.data.callback.GetHashtagsCallback;
 import com.roman.noto.data.callback.GetHashtagsForAdapterCallback;
@@ -16,6 +16,7 @@ import com.roman.noto.util.NoteColor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -23,8 +24,8 @@ public class NotesPresenter implements NotesContract.Presenter
 {
     static final String TAG = "NotesPresenter";
 
-    private Repository repository;
-    private NotesContract.View view;
+    private final Repository repository;
+    private final NotesContract.View view;
 
 
     NotesPresenter(NotesContract.View view, Repository repository) {
@@ -59,7 +60,7 @@ public class NotesPresenter implements NotesContract.Presenter
     }
 
     @Override
-    public void addNote() {
+    public void addEmptyNote() {
         Note newNote = new Note();
         repository.saveNote(newNote);
         view.editNote(newNote);
@@ -176,6 +177,18 @@ public class NotesPresenter implements NotesContract.Presenter
                 view.showNotes(notes);
             }
         });
+    }
+
+    @Override
+    public void addEmptyNoteWithHashtag(NavigationHashtag selectedHashtag) {
+        //Создаем пустую заметку и добавляем хештег
+        Note newNote = new Note();
+        if(newNote.getHashtags() == null)
+            newNote.setHashtags(new HashSet<Integer>());
+        if(selectedHashtag != null)
+            newNote.getHashtags().add(selectedHashtag.getId());
+        repository.saveNote(newNote);
+        view.editNote(newNote);
     }
 
     private List<NavigationHashtag> hashtagsMapToList(Map<Integer, String> hashtags) {

@@ -45,4 +45,8 @@
     <string name="activity_settings_alert_delete_title">Delete database</string>
     <string name="activity_settings_alert_delete_yes">Delete</string>
     <string name="activity_settings_alert_delete_no">Cancel</string>
+    <string name="activity_choose_hashtag_add">Add hashtag</string>
+    <string name="activity_choose_hashtag_enter_name">Enter hashtag name</string>
+    <string name="activity_choose_hashtag_icon_add">Add hashtag</string>
+    <string name="activity_choose_hashtag_icon_h">Hashtag</string>
 </resources>

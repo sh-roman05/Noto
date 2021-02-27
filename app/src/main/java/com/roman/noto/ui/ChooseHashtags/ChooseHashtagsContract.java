@@ -12,5 +12,8 @@ public interface ChooseHashtagsContract {
     interface Presenter {
         void selectHashtagsShow(Note note);
         void saveSelectHashtags(Note note, List<ChooseHashtag> hashtagList);
+
+        //Создать новый хештег и сохранить
+        void addNewHashtag(String name);
     }
 }

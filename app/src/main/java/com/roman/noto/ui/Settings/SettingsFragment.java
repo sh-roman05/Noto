@@ -26,12 +26,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.preference_settings, rootKey);
-
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(requireContext());
-        String temp = settings.getString("columns_list", "2");
+        //SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(requireContext());
     }
-
-
 
     @Override
     public boolean onPreferenceTreeClick(Preference preference) {

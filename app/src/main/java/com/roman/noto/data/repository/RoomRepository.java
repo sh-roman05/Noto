@@ -9,6 +9,7 @@ import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.roman.noto.data.AppDatabase;
+import com.roman.noto.data.Hashtag;
 import com.roman.noto.data.Note;
 import com.roman.noto.data.NoteDao;
 import com.roman.noto.data.callback.DeleteArchiveNotesCallback;
@@ -28,11 +29,15 @@ public class RoomRepository implements Repository {
 
     //TODO нужно ли обрабатывать исключения (EmptyResultSetException)
 
-    //TODO сменить имя базы на нормальное, в будущем придется писать миграцию
+
+    /*
+    * Сейчас все изменения таблиц и полей фиксирую через изменение файла базы
+    * В будущем разобраться с миграцией, что-бы не удалились данные пользователя
+    */
 
     static final String TAG = "RoomRepository";
     private static RoomRepository INSTANCE = null;
-    private String filename = "database17.db";
+    private String filename = "database18.db";
     private NoteDao dao;
     private AppDatabase db;
     private AppExecutors appExecutors;
@@ -44,7 +49,6 @@ public class RoomRepository implements Repository {
             @Override
             public void onCreate(@NonNull SupportSQLiteDatabase db) {
                 super.onCreate(db);
-                //https://medium.com/@srinuraop/database-create-and-open-callbacks-in-room-7ca98c3286ab
             }
         }).build();
         this.dao = db.noteDao();
@@ -99,7 +103,6 @@ public class RoomRepository implements Repository {
             @Override
             public void run() {
                 db.clearAllTables();
-                generateTestData();
             }
         };
         appExecutors.diskIO().execute(runnable);
@@ -156,8 +159,31 @@ public class RoomRepository implements Repository {
     }
 
     @Override
-    public void getHashtags(GetHashtagsCallback callback) {
-        //
+    public void getHashtags(final GetHashtagsCallback callback) {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                final ArrayList<Hashtag> hashtags = (ArrayList<Hashtag>) dao.getAllHashtags();
+                appExecutors.mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onHashtagsLoaded(hashtags);
+                    }
+                });
+            }
+        };
+        appExecutors.diskIO().execute(runnable);
+    }
+
+    @Override
+    public void addHashtag(final Hashtag newHashtag) {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                dao.addHashtag(newHashtag);
+            }
+        };
+        appExecutors.diskIO().execute(runnable);
     }
 
     @Override
@@ -234,6 +260,7 @@ public class RoomRepository implements Repository {
     @Override
     public void getNotesWithHashtag(int id, GetNotesWithHashtagCallback callback) {
         //Не используется
+        //todo: но можно сделать sql запрос
     }
 
     private void getAllNotes(final LoadNotesCallback callback)
@@ -253,43 +280,7 @@ public class RoomRepository implements Repository {
         appExecutors.diskIO().execute(runnable);
     }
 
-    private void generateTestData()
-    {
-        Random rand = new Random();
 
-
-        ArrayList<Note> templ = new ArrayList<>();
-
-        for (int i = 0; i < 120; i++) {
-            int color = Math.abs(rand.nextInt() % 18);
-
-            String title = "Title " + color;
-
-            String text = "";
-            int cnt = Math.abs(rand.nextInt() % 6) + 1;
-            for (int j = 0; j < cnt; j++) {
-                text += "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ";
-            }
-
-
-            Note temp = new Note();
-
-
-
-            temp.setColor(color);
-            temp.setTitle(title);
-            temp.setText(text);
-
-            templ.add(temp);
-        }
-
-        dao.insertList(templ);
-
-
-
-
-
-    }
 
 }
 

@@ -38,11 +38,15 @@
     <string name="activity_choose_hashtag_empty">У вас нет хэштегов</string>
     <string name="activity_notes_hashtag_more">еще</string>
     <string name="navigation_view_hashtags">Хэштеги</string>
-    <string name="navigation_view_add_hashtag">Добавить хештег</string>
+    <string name="navigation_view_add_hashtag">Добавить хэштег</string>
     <string name="navigation_view_hashtags_title">Хэштеги</string>
     <string name="navigation_view_hashtags_change">Изменить</string>
     <string name="activity_settings_alert_delete_message">Вы уверены что хотите удалить всю базу данных?</string>
     <string name="activity_settings_alert_delete_title">Удалить базу даннных</string>
     <string name="activity_settings_alert_delete_no">Отмена</string>
     <string name="activity_settings_alert_delete_yes">Удалить</string>
+    <string name="activity_choose_hashtag_add">Добавить хэштег</string>
+    <string name="activity_choose_hashtag_enter_name">Введите название хэштега</string>
+    <string name="activity_choose_hashtag_icon_add">Добавить хэштег</string>
+    <string name="activity_choose_hashtag_icon_h">Хэштег</string>
 </resources>

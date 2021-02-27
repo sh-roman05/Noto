@@ -2,6 +2,7 @@ package com.roman.noto.ui.NoteDetail;
 
 import android.util.Log;
 
+import com.roman.noto.data.Hashtag;
 import com.roman.noto.data.callback.DeleteNoteCallback;
 import com.roman.noto.data.callback.GetHashtagsCallback;
 import com.roman.noto.data.callback.GetNoteCallback;
@@ -9,7 +10,9 @@ import com.roman.noto.data.Note;
 import com.roman.noto.data.repository.Repository;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public class NoteDetailPresenter implements NoteDetailContract.Presenter {
@@ -100,13 +103,15 @@ public class NoteDetailPresenter implements NoteDetailContract.Presenter {
             public void onDataNotAvailable() { }
 
             @Override
-            public void onHashtagsLoaded(Map<Integer, String> object) {
-                ArrayList<String> temp = new ArrayList<>();
-                for (int hashId: note.getHashtags()) {
-                    String hashStr = object.get(hashId);
-                    if(hashStr != null) temp.add(hashStr);
+            public void onHashtagsLoaded(List<Hashtag> hashtags) {
+                Set<Integer> selectedHashtags = note.getHashtags();
+                ArrayList<String> hashtagName = new ArrayList<>();
+                for (Hashtag tag: hashtags){
+                    if(selectedHashtags.contains(tag.getId())){
+                        hashtagName.add(tag.getName());
+                    }
                 }
-                view.hashtagsShow(temp);
+                view.hashtagsShow(hashtagName);
             }
         });
     }

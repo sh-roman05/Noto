@@ -21,6 +21,7 @@ import com.google.android.material.chip.Chip;
 import com.google.common.base.Strings;
 import com.roman.noto.NoteTouchHelperClass;
 import com.roman.noto.R;
+import com.roman.noto.data.Hashtag;
 import com.roman.noto.data.Note;
 import com.roman.noto.data.callback.GetHashtagsForAdapterCallback;
 import com.roman.noto.util.NoteColor;
@@ -50,7 +51,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
     private NotesContract.Presenter presenter;
 
     //Нужно хранить актуальную версию
-    Map<Integer, String> hashtags;
+    List<Hashtag> hashtags;
 
     NotesAdapter(List<Note> notes, NotesActivity.NoteListener listener, NotesContract.Presenter presenter, String moreString) {
         setList(notes);
@@ -63,11 +64,11 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
         presenter.getHashtagsForAdapter(new GetHashtagsForAdapterCallback() {
             @Override
             public void onDataNotAvailable() {
-                hashtags = new HashMap<>();
+                hashtags = new ArrayList<Hashtag>();
             }
 
             @Override
-            public void onHashtagsLoaded(Map<Integer, String> object) {
+            public void onHashtagsLoaded(List<Hashtag> object) {
                 hashtags = object;
             }
         });
@@ -228,14 +229,14 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
             card.setCardBackgroundColor(Color.parseColor(NoteColor.getInstance().getItemColor(item.getColor()).getColorBackground()));
 
             //Получаем список id прикрепленных хештегов
-            HashSet<Integer> hashId = item.getHashtags();
+            HashSet<Integer> noteHashList = item.getHashtags();
 
-            ArrayList<String> hashName = new ArrayList<>();
-            Iterator iter =  hashId.iterator();
-            while (iter.hasNext())
-            {
-                String name = hashtags.get((Integer) iter.next());
-                if(name != null) hashName.add(name);
+            //Сюда скидываем имена выбранных хештегов
+            ArrayList<String> hashNames = new ArrayList<>();
+            for (Hashtag hashtag: hashtags){
+                if(noteHashList.contains(hashtag.getId())){
+                    if(hashtag.getName() != null) hashNames.add(hashtag.getName());
+                }
             }
 
 
@@ -245,25 +246,25 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
             chip3.setVisibility(View.GONE);
 
 
-            if(hashName.size() == 1) {
-                chip1.setText(hashName.get(0));
+            if(hashNames.size() == 1) {
+                chip1.setText(hashNames.get(0));
                 chip1.setVisibility(View.VISIBLE);
-            } else if(hashName.size() == 2){
-                chip1.setText(hashName.get(0));
-                chip2.setText(hashName.get(1));
+            } else if(hashNames.size() == 2){
+                chip1.setText(hashNames.get(0));
+                chip2.setText(hashNames.get(1));
                 chip1.setVisibility(View.VISIBLE);
                 chip2.setVisibility(View.VISIBLE);
-            } else if(hashName.size() == 3){
-                chip1.setText(hashName.get(0));
-                chip2.setText(hashName.get(1));
-                chip3.setText(hashName.get(2));
+            } else if(hashNames.size() == 3){
+                chip1.setText(hashNames.get(0));
+                chip2.setText(hashNames.get(1));
+                chip3.setText(hashNames.get(2));
                 chip1.setVisibility(View.VISIBLE);
                 chip2.setVisibility(View.VISIBLE);
                 chip3.setVisibility(View.VISIBLE);
-            } else if(hashName.size() > 3) {
-                chip1.setText(hashName.get(0));
-                chip2.setText(hashName.get(1));
-                chip3.setText("+ " + moreString + " " + (hashName.size() - 2));
+            } else if(hashNames.size() > 3) {
+                chip1.setText(hashNames.get(0));
+                chip2.setText(hashNames.get(1));
+                chip3.setText("+ " + moreString + " " + (hashNames.size() - 2));
                 chip1.setVisibility(View.VISIBLE);
                 chip2.setVisibility(View.VISIBLE);
                 chip3.setVisibility(View.VISIBLE);

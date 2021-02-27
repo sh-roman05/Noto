@@ -2,6 +2,7 @@ package com.roman.noto.ui.ChooseHashtags;
 
 import android.util.Log;
 
+import com.roman.noto.data.Hashtag;
 import com.roman.noto.data.Note;
 import com.roman.noto.data.callback.GetHashtagsCallback;
 import com.roman.noto.data.repository.Repository;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class ChooseHashtagsPresenter implements ChooseHashtagsContract.Presenter {
 
@@ -33,9 +35,13 @@ public class ChooseHashtagsPresenter implements ChooseHashtagsContract.Presenter
             public void onDataNotAvailable() { }
 
             @Override
-            public void onHashtagsLoaded(Map<Integer, String> object) {
-                //
-                List<ChooseHashtag> hashtagList = hashtagsMapToList(object);
+            public void onHashtagsLoaded(List<Hashtag> object) {
+
+                List<ChooseHashtag> hashtagList = new ArrayList<>();
+                for (Hashtag hashtag: object) {
+                    hashtagList.add(new ChooseHashtag(hashtag.getId(), hashtag.getName(), false));
+                }
+
                 for (ChooseHashtag tag: hashtagList) {
                     for (Integer selectInt: note.getHashtags()) {
                         if(tag.getId().equals(selectInt)){
@@ -44,7 +50,6 @@ public class ChooseHashtagsPresenter implements ChooseHashtagsContract.Presenter
                         }
                     }
                 }
-                //
                 view.hashtagShow(hashtagList);
             }
         });
@@ -63,19 +68,19 @@ public class ChooseHashtagsPresenter implements ChooseHashtagsContract.Presenter
         }
         note.setHashtags(hashList);
 
-        Log.d(TAG, "saveSelectHashtags, size: " + note.getHashtags().size());
-
         repository.updateNote(note);
     }
 
-
-    private List<ChooseHashtag> hashtagsMapToList(Map<Integer, String> hashtags) {
-        List<ChooseHashtag> temp = new ArrayList<>();
-        //Получаем список всех id
-        List<Integer> list = new ArrayList<Integer>(hashtags.keySet());
-        for (Integer id: list) {
-            temp.add(new ChooseHashtag(id, hashtags.get(id), false));
-        }
-        return temp;
+    @Override
+    public void addNewHashtag(String name) {
+        //Создать хештег и отправить на сохранение
+        Hashtag newHashtag = new Hashtag(generateUniqueId(), name);
+        repository.addHashtag(newHashtag);
     }
+
+    private static int generateUniqueId() {
+        UUID uuid = UUID.randomUUID();
+        return Math.abs(uuid.hashCode());
+    }
+
 }

@@ -57,5 +57,15 @@ public interface NoteDao {
     @Insert
     void insertList(List<Note> notes);
 
+    ///*************************************************
+
+    //Получить все хештеги из таблицы
+    @Query("SELECT * FROM hashtags")
+    List<Hashtag> getAllHashtags();
+
+    //Добавить хештег в таблицу
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void addHashtag(Hashtag hashtag);
+
 
 }

@@ -1,5 +1,6 @@
 package com.roman.noto.data.repository;
 
+import com.roman.noto.data.Hashtag;
 import com.roman.noto.data.Note;
 import com.roman.noto.data.callback.DeleteArchiveNotesCallback;
 import com.roman.noto.data.callback.DeleteNoteCallback;
@@ -46,4 +47,5 @@ public interface Repository {
     void getHashtags(final GetHashtagsCallback callback);
     //Удалить хештег
     //Добавить хештег
+    void addHashtag(Hashtag newHashtag);
 }

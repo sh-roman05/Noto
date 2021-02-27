@@ -3,6 +3,7 @@ package com.roman.noto.ui.Notes;
 import android.util.Log;
 
 
+import com.roman.noto.data.Hashtag;
 import com.roman.noto.data.callback.DeleteArchiveNotesCallback;
 import com.roman.noto.data.callback.GetHashtagsCallback;
 import com.roman.noto.data.callback.GetHashtagsForAdapterCallback;
@@ -143,7 +144,7 @@ public class NotesPresenter implements NotesContract.Presenter
             }
 
             @Override
-            public void onHashtagsLoaded(Map<Integer, String> object) {
+            public void onHashtagsLoaded(List<Hashtag> object) {
                 callback.onHashtagsLoaded(object);
             }
         });
@@ -156,7 +157,7 @@ public class NotesPresenter implements NotesContract.Presenter
             public void onDataNotAvailable() { }
 
             @Override
-            public void onHashtagsLoaded(Map<Integer, String> object) {
+            public void onHashtagsLoaded(List<Hashtag> object) {
                 List<NavigationHashtag> hashtagList = hashtagsMapToList(object);
                 view.applyHashtags(hashtagList);
             }
@@ -191,12 +192,11 @@ public class NotesPresenter implements NotesContract.Presenter
         view.editNote(newNote);
     }
 
-    private List<NavigationHashtag> hashtagsMapToList(Map<Integer, String> hashtags) {
+    private List<NavigationHashtag> hashtagsMapToList(List<Hashtag> hashtags) {
         List<NavigationHashtag> temp = new ArrayList<>();
         //Получаем список всех id
-        List<Integer> list = new ArrayList<Integer>(hashtags.keySet());
-        for (Integer id: list) {
-            temp.add(new NavigationHashtag(id, hashtags.get(id)));
+        for (Hashtag hashtag: hashtags) {
+            temp.add(new NavigationHashtag(hashtag.getId(), hashtag.getName()));
         }
         return temp;
     }

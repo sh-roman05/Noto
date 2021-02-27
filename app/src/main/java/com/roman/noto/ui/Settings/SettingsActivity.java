@@ -17,7 +17,7 @@ import com.roman.noto.util.AppExecutors;
 public class SettingsActivity extends AppCompatActivity implements SettingsContract.View {
 
     static final String TAG = "SettingsActivity";
-    public SettingsContract.Presenter presenter;
+    SettingsContract.Presenter presenter;
     Toolbar toolbar;
 
     @Override

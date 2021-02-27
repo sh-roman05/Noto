@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.roman.noto.data.Hashtag;
 import com.roman.noto.data.Note;
 import com.roman.noto.data.callback.DeleteArchiveNotesCallback;
 import com.roman.noto.data.callback.DeleteNoteCallback;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -161,18 +163,43 @@ public class CacheRepository implements Repository
         });
     }
 
+
+    ArrayList<Hashtag> hashtags;
+
     //todo хеш теги кеш временный
     @Override
-    public void getHashtags(GetHashtagsCallback callback) {
-        HashMap<Integer, String> hashtags;
-        hashtags = new HashMap<>();
-        hashtags.put(0, "Учеба");
-        hashtags.put(1, "Работа");
-        hashtags.put(2, "Полезное");
-        hashtags.put(3, "Купить");
-        hashtags.put(4, "Посмотреть");
-        hashtags.put(5, "Важное");
-        callback.onHashtagsLoaded(hashtags);
+    public void getHashtags(final GetHashtagsCallback callback) {
+        if (hashtags == null) {
+            repository.getHashtags(new GetHashtagsCallback() {
+                @Override
+                public void onDataNotAvailable() {
+                    callback.onDataNotAvailable();
+                }
+
+                @Override
+                public void onHashtagsLoaded(List<Hashtag> object) {
+                    hashtags = (ArrayList<Hashtag>) object;
+                    callback.onHashtagsLoaded(hashtags);
+                }
+            });
+        } else {
+            callback.onHashtagsLoaded(hashtags);
+        }
+    }
+
+    @Override
+    public void addHashtag(Hashtag newHashtag) {
+        if (hashtags == null){
+            hashtags = new ArrayList<Hashtag>();
+            hashtags.add(newHashtag);
+            //
+        } else {
+            //
+            hashtags.add(newHashtag);
+
+        }
+        //Сохранить в базу
+        repository.addHashtag(newHashtag);
     }
 
     @Override

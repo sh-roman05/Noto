@@ -5,8 +5,8 @@ import com.roman.noto.data.repository.Repository;
 public class SettingsPresenter implements SettingsContract.Presenter {
     static final String TAG = "SettingsPresenter";
 
-    private Repository repository;
-    private SettingsContract.View view;
+    private final Repository repository;
+    private final SettingsContract.View view;
 
     public SettingsPresenter(SettingsContract.View view, Repository repository) {
         this.view = view;

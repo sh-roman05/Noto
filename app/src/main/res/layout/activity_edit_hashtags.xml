@@ -4,6 +4,93 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.EditHashtags.EditHashtagsActivity">
+    tools:context=".ui.EditHashtags.EditHashtagsActivity"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.Toolbar
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            android:id="@+id/activity_edit_hashtag_toolbar"
+            app:contentInsetStartWithNavigation="0dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            app:layout_anchorGravity="center">
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/activity_edit_hashtag_search_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:searchIcon="@null"
+                app:iconifiedByDefault="false"
+                app:queryHint="@string/activity_choose_hashtag_enter_name"
+                android:gravity="end" />
+
+        </androidx.appcompat.widget.Toolbar>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!-- Кнопка добавление хештега -->
+            <FrameLayout
+                android:id="@+id/activity_edit_hashtag_container_add"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:visibility="invisible">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_add"
+                        android:contentDescription="@string/activity_choose_hashtag_icon_add" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="34dp"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/activity_choose_hashtag_add"/>
+                </LinearLayout>
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/activity_edit_hashtag_container_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <TextView
+                    android:id="@+id/activity_edit_hashtag_empty_view"
+                    android:visibility="invisible"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/activity_choose_hashtag_empty"/>
+                <com.roman.noto.RecyclerViewEmptySupport
+                    android:id="@+id/activity_edit_hashtags_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+            </FrameLayout>
+
+
+
+        </FrameLayout>
+
+
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

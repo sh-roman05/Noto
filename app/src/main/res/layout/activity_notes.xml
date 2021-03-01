@@ -163,6 +163,7 @@
                         android:textSize="12sp"
                         android:text="@string/navigation_view_hashtags_title"/>
                     <TextView
+                        android:id="@+id/activity_notes_nv_hashtags_change"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="?android:attr/selectableItemBackground"

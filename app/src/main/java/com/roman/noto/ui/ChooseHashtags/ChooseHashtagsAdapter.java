@@ -26,7 +26,7 @@ public class ChooseHashtagsAdapter extends RecyclerView.Adapter<ChooseHashtagsAd
     @Override
     public CustomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         @SuppressLint("InflateParams")
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.choose_hashtag_item, null);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_choose_hashtag, null);
         return new CustomViewHolder(view);
     }
 

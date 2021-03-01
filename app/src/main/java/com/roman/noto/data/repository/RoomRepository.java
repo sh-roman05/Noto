@@ -187,6 +187,17 @@ public class RoomRepository implements Repository {
     }
 
     @Override
+    public void saveHashtags(final List<Hashtag> hashtags) {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                dao.updateHashtags(hashtags);
+            }
+        };
+        appExecutors.diskIO().execute(runnable);
+    }
+
+    @Override
     public void deleteNote(final Note note, final DeleteNoteCallback callback) {
         Runnable runnable = new Runnable() {
             @Override

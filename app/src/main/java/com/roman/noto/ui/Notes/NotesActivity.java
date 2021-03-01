@@ -47,6 +47,7 @@ import com.roman.noto.RecyclerViewEmptySupport;
 import com.roman.noto.data.repository.NavigationHashtag;
 import com.roman.noto.ui.About.AboutActivity;
 import com.roman.noto.data.Note;
+import com.roman.noto.ui.EditHashtags.EditHashtagsActivity;
 import com.roman.noto.ui.Settings.SettingsActivity;
 import com.roman.noto.util.NoteColor;
 import com.roman.noto.ui.NoteDetail.NoteDetailActivity;
@@ -86,7 +87,7 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
     NotesAdapter adapter;
 
     //NavigationView
-    View buttonNotes, buttonDelete, buttonSettings, buttonAbout, buttonAddHashtag;
+    View buttonNotes, buttonDelete, buttonSettings, buttonAbout, buttonAddHashtag, buttonChange;
     View nvNoHashtags, nvHasHashtags;
     NavigationView navigationView;
     DrawerLayout drawerLayout;
@@ -128,6 +129,7 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
         buttonSettings = findViewById(R.id.activity_notes_nv_settings);
         buttonAbout = findViewById(R.id.activity_notes_nv_about);
         buttonAddHashtag = findViewById(R.id.activity_notes_nv_add_hashtag);
+        buttonChange = findViewById(R.id.activity_notes_nv_hashtags_change);
         navHashtagsRecyclerView = findViewById(R.id.activity_notes_hashtags_list);
         navigationView = findViewById(R.id.activity_notes_navigation);
         drawerLayout = findViewById(R.id.activity_notes_drawer);
@@ -332,7 +334,16 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
             @Override
             public void onClick(View v) {
                 //todo Станица редактирования
-                Intent intent = new Intent(getApplicationContext(), AboutActivity.class);
+                //todo Добавить метку
+                Intent intent = new Intent(getApplicationContext(), EditHashtagsActivity.class);
+                startActivity(intent);
+                drawerLayout.closeDrawer(GravityCompat.START);
+            }
+        });
+        buttonChange.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), EditHashtagsActivity.class);
                 startActivity(intent);
                 drawerLayout.closeDrawer(GravityCompat.START);
             }

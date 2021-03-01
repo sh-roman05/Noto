@@ -58,8 +58,10 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
         this.listener = listener;
         this.presenter = presenter;
         this.moreString = moreString;
+        refreshHashtags();
+    }
 
-
+    void refreshHashtags() {
         //Запросить список хештегов
         presenter.getHashtagsForAdapter(new GetHashtagsForAdapterCallback() {
             @Override
@@ -72,7 +74,6 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
                 hashtags = object;
             }
         });
-
     }
 
     //Список элементов, у которых нужно изменить цвет
@@ -134,6 +135,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
     }
 
     void replaceData(List<Note> notes) {
+        refreshHashtags();
         setList(notes);
         notifyDataSetChanged();
     }
@@ -141,6 +143,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
     private void setList(List<Note> notes) {
         this.list.clear();
         this.list.addAll(notes);
+        //refreshHashtags();
     }
 
 

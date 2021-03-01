@@ -203,6 +203,12 @@ public class CacheRepository implements Repository
     }
 
     @Override
+    public void saveHashtags(List<Hashtag> hashtags) {
+        this.hashtags = (ArrayList<Hashtag>) hashtags;
+        repository.saveHashtags(hashtags);
+    }
+
+    @Override
     public void deleteNote(Note note, final DeleteNoteCallback callback) {
         //Клонировать объект
         Note temp = new Note(note);

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp"
+    android:clickable="true"
+    android:focusable="true">
+
+    <FrameLayout
+        android:id="@+id/item_edit_hashtag_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="7dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <ImageView
+            android:id="@+id/item_edit_hashtag_button_hashtag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:src="@drawable/ic_hashtag"
+            app:tint="#A6000000" />
+        <ImageView
+            android:id="@+id/item_edit_hashtag_button_delete"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="10dp"
+            android:src="@drawable/ic_delete"
+            app:tint="#EF5350"
+            tools:ignore="ContentDescription" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/item_edit_hashtag_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <ImageView
+            android:id="@+id/item_edit_hashtag_button_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:padding="10dp"
+            android:src="@drawable/ic_pencil"
+            app:tint="#A6000000" />
+        <ImageView
+            android:id="@+id/item_edit_hashtag_button_save"
+            android:visibility="invisible"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:padding="10dp"
+            android:src="@drawable/ic_done"
+            app:tint="#7CB342"
+            tools:ignore="ContentDescription"/>
+    </FrameLayout>
+
+
+
+    <EditText
+        android:id="@+id/item_edit_hashtag_name"
+        android:layout_width="0dp"
+        app:layout_constraintWidth_default="spread"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="21dp"
+        android:background="@android:color/transparent"
+        android:hint="введите название хештега"
+        android:text="Работа"
+        app:layout_constraintEnd_toStartOf="@+id/item_edit_hashtag_right"
+        app:layout_constraintStart_toEndOf="@+id/item_edit_hashtag_left"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

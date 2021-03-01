@@ -48,4 +48,6 @@ public interface Repository {
     //Удалить хештег
     //Добавить хештег
     void addHashtag(Hashtag newHashtag);
+    //Сохранить хештеги
+    void saveHashtags(List<Hashtag> hashtags);
 }

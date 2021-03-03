@@ -58,13 +58,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_add"
-                        android:contentDescription="@string/activity_choose_hashtag_icon_add" />
+                        android:contentDescription="@string/activity_edit_hashtags_add_hashtag" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="34dp"
                         android:layout_gravity="center_vertical"
-                        android:text="@string/activity_choose_hashtag_add"/>
+                        android:text="@string/activity_edit_hashtags_add_hashtag"/>
                 </LinearLayout>
             </FrameLayout>
 
@@ -82,7 +82,7 @@
                 <com.roman.noto.RecyclerViewEmptySupport
                     android:id="@+id/activity_edit_hashtags_list"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
+                    android:layout_height="match_parent" />
             </FrameLayout>
 
 
@@ -92,5 +92,7 @@
 
 
     </LinearLayout>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -46,6 +46,7 @@ public interface Repository {
     //Получить все хештеги
     void getHashtags(final GetHashtagsCallback callback);
     //Удалить хештег
+    void deleteHashtag(Hashtag hashtag);
     //Добавить хештег
     void addHashtag(Hashtag newHashtag);
     //Сохранить хештеги

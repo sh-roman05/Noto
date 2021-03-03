@@ -5,6 +5,7 @@ import com.roman.noto.data.callback.GetHashtagsCallback;
 import com.roman.noto.data.repository.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 public class EditHashtagsPresenter implements EditHashtagsContract.Presenter {
 
@@ -40,5 +41,21 @@ public class EditHashtagsPresenter implements EditHashtagsContract.Presenter {
 
         repository.saveHashtags(hashtags);
 
+    }
+
+    @Override
+    public void deleteHashtag(Hashtag hashtag) {
+        repository.deleteHashtag(hashtag);
+    }
+
+    @Override
+    public void addNewHashtag(String name) {
+        Hashtag newHashtag = new Hashtag(generateUniqueId(), name);
+        repository.addHashtag(newHashtag);
+    }
+
+    private static int generateUniqueId() {
+        UUID uuid = UUID.randomUUID();
+        return Math.abs(uuid.hashCode());
     }
 }

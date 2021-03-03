@@ -87,7 +87,7 @@ public class ChooseHashtagsActivity extends AppCompatActivity implements ChooseH
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                //todo сохранить хештег
+                addHashtag();
                 return false;
             }
 
@@ -112,9 +112,7 @@ public class ChooseHashtagsActivity extends AppCompatActivity implements ChooseH
         containerAddHashtag.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                presenter.addNewHashtag(searchView.getQuery().toString());
-                searchView.setQuery("", false);
-                presenter.selectHashtagsShow(note);
+                addHashtag();
             }
         });
 
@@ -122,7 +120,11 @@ public class ChooseHashtagsActivity extends AppCompatActivity implements ChooseH
     }
 
 
-
+    private void addHashtag() {
+        presenter.addNewHashtag(searchView.getQuery().toString());
+        searchView.setQuery("", false);
+        presenter.selectHashtagsShow(note);
+    }
 
 
 

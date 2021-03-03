@@ -49,4 +49,9 @@
     <string name="activity_choose_hashtag_enter_name">Введите название хэштега</string>
     <string name="activity_choose_hashtag_icon_add">Добавить хэштег</string>
     <string name="activity_choose_hashtag_icon_h">Хэштег</string>
+    <string name="activity_edit_hashtags_alert_title">Удалить</string>
+    <string name="activity_edit_hashtags_alert_message">Хэштег будет удален. Он исчезнет со всех заметок, но сами заметки сохранятся</string>
+    <string name="activity_edit_hashtags_alert_delete_yes">Удалить</string>
+    <string name="activity_edit_hashtags_alert_delete_no">Отмена</string>
+    <string name="activity_edit_hashtags_add_hashtag">Добавить хэштег</string>
 </resources>

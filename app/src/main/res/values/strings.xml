@@ -49,4 +49,9 @@
     <string name="activity_choose_hashtag_enter_name">Enter hashtag name</string>
     <string name="activity_choose_hashtag_icon_add">Add hashtag</string>
     <string name="activity_choose_hashtag_icon_h">Hashtag</string>
+    <string name="activity_edit_hashtags_alert_title">Delete</string>
+    <string name="activity_edit_hashtags_alert_message">The hashtag will be removed. It will disappear from all notes, but the notes themselves will be preserved</string>
+    <string name="activity_edit_hashtags_alert_delete_yes">Delete</string>
+    <string name="activity_edit_hashtags_alert_delete_no">Cancel</string>
+    <string name="activity_edit_hashtags_add_hashtag">Add hashtag</string>
 </resources>

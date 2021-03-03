@@ -188,6 +188,17 @@ public class CacheRepository implements Repository
     }
 
     @Override
+    public void deleteHashtag(Hashtag hashtag) {
+
+        if (hashtags != null) {
+            hashtags.remove(hashtag);
+            repository.deleteHashtag(hashtag);
+        }
+
+
+    }
+
+    @Override
     public void addHashtag(Hashtag newHashtag) {
         if (hashtags == null){
             hashtags = new ArrayList<Hashtag>();

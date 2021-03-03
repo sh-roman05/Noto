@@ -16,6 +16,10 @@ public interface EditHashtagsContract {
         void loadHashtags();
         //Сохранить хештеги
         void saveHashtags(List<Hashtag> hashtags);
+        //Удалить хештег
+        void deleteHashtag(Hashtag hashtag);
+        //Добавить новый хештег
+        void addNewHashtag(String name);
     }
 
 }

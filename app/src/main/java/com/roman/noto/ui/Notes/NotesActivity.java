@@ -319,7 +319,7 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
                 startActivity(intent);
-                drawerLayout.closeDrawer(GravityCompat.START);
+                //drawerLayout.closeDrawer(GravityCompat.START);
             }
         });
         buttonAbout.setOnClickListener(new View.OnClickListener() {
@@ -327,7 +327,7 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), AboutActivity.class);
                 startActivity(intent);
-                drawerLayout.closeDrawer(GravityCompat.START);
+                //drawerLayout.closeDrawer(GravityCompat.START);
             }
         });
         buttonAddHashtag.setOnClickListener(new View.OnClickListener() {
@@ -337,7 +337,7 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
                 //todo Добавить метку
                 Intent intent = new Intent(getApplicationContext(), EditHashtagsActivity.class);
                 startActivity(intent);
-                drawerLayout.closeDrawer(GravityCompat.START);
+                //drawerLayout.closeDrawer(GravityCompat.START);
             }
         });
         buttonChange.setOnClickListener(new View.OnClickListener() {
@@ -345,7 +345,7 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), EditHashtagsActivity.class);
                 startActivity(intent);
-                drawerLayout.closeDrawer(GravityCompat.START);
+                //drawerLayout.closeDrawer(GravityCompat.START);
             }
         });
 
@@ -408,6 +408,9 @@ public class NotesActivity extends AppCompatActivity implements NotesContract.Vi
                 hashtagsAdapter.notifyItemChanged(position);
 
                 presenter.loadNotesWithHashtag(item.getId());
+
+                toolbar.getMenu().clear();
+                toolbar.inflateMenu(R.menu.notes_toolbar);
                 toolbar.setTitle(item.getName());
 
                 addNoteButton.show();

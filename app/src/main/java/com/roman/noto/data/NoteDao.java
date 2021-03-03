@@ -67,9 +67,13 @@ public interface NoteDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void addHashtag(Hashtag hashtag);
 
+    @Delete
+    void deleteHashtag(Hashtag hashtag);
+
     //Обновить хештеги
     @Update
     void updateHashtags(List<Hashtag> hashtags);
+
 
 
 }
